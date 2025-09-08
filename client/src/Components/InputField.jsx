@@ -17,7 +17,7 @@ export default function InputField({
         onChange={onChange}
         type={type}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-gray-200 p-4 shadow-sm placeholder:text-gray-150 bg-white"
+        className="w-[400px] rounded-lg border border-gray-200 p-4 shadow-sm placeholder:text-gray-150 bg-white kis"
       />
     </div>
   );

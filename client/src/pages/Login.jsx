@@ -17,35 +17,36 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-6">
-      <h2 className="text-3xl font-bold mb-6">Welcome back</h2>
+    <div className="min-h-[80vh] flex items-center justify-center px-6">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow">
+        <h2 className="text-3xl font-bold mb-6 text-center">Welcome back</h2>
 
-      <form onSubmit={handleSubmit} className="w-full max-w-xl">
-        <InputField
-          label="Username"
-          name="username"
-          value={form.username}
-          onChange={handleChange}
-          placeholder="Enter your username"
-        />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <InputField
+            label="Username"
+            name="username"
+            value={form.username}
+            onChange={handleChange}
+            placeholder="Enter your username"
+          />
 
-        <InputField
-          label="Password"
-          name="password"
-          type="password"
-          value={form.password}
-          onChange={handleChange}
-          placeholder="Enter your password"
-        />
+          <InputField
+            label="Password"
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={handleChange}
+            placeholder="Enter your password"
+          />
 
-        <div className="mt-4">
-          <Button type="submit">Login</Button>
-        </div>
-      </form>
+          <Button type="submit" className="w-full bg-blue-600 text-white font-semibold py-2 px-4 
+          rounded hover:bg-blue-700transition duration-300">Login</Button></form>
 
-      <p className="mt-6 text-sm">
-        Don't have an account? <Link to="/signup" className="text-blue-600">Sign up</Link>
-      </p>
+        <p className="mt-6 text-sm text-center">
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-blue-600">Register</Link>
+        </p>
+      </div>
     </div>
   );
 }

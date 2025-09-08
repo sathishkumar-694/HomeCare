@@ -1,36 +1,55 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import ThemeToggle from "./ToggleTheme";
 
-export default function Navbar() {
+function Navbar() {
+  const linkStyle = ({ isActive }) => ({
+    color: isActive ? "#3b82f6" : "inherit", // blue for active link
+    textDecoration: "none",
+    fontWeight: isActive ? "bold" : "normal",
+    padding: "8px 12px",
+  });
+
   return (
-    <header className="w-full bg-[#e6ffd8] border-b border-[#d6f3c6]">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 bg-black rounded-sm" aria-hidden />
-          <span className="font-semibold text-lg">Home care</span>
-        </div>
+    <nav
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "12px 24px",
+        backgroundColor:
+          localStorage.getItem("theme") === "dark" ? "#1a202c" : "#ffffff",
+        color:
+          localStorage.getItem("theme") === "dark" ? "#f8f9fa" : "#1a202c",
+        transition: "all 0.3s ease",
+      }}
+    >
+      {/* Left side: logo or app name */}
+      <h1 style={{ fontSize: "20px", fontWeight: "bold" }}>HomeCare</h1>
 
-        <nav className="hidden md:flex items-center gap-6">
-          <Link to="/" className="hover:underline">Home</Link>
-          <Link to="/about" className="hover:underline">About</Link>
-          <Link to="/services" className="hover:underline">Services</Link>
-          <Link to="/contact" className="hover:underline">Contact</Link>
-
-          <Link
-            to="/signup"
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg font-medium"
-          >
-            Sign Up
-          </Link>
-
-          <Link
-            to="/login"
-            className="bg-white px-4 py-2 rounded-lg border shadow-sm"
-          >
-            Log In
-          </Link>
-        </nav>
+      {/* Center: navigation links */}
+      <div style={{ display: "flex", gap: "16px" }}>
+        <NavLink to="/" style={linkStyle}>
+          Home
+        </NavLink>
+        <NavLink to="/about" style={linkStyle}>
+          About
+        </NavLink>
+        <NavLink to="/services" style={linkStyle}>
+          Services
+        </NavLink>
+        <NavLink to="/contact" style={linkStyle}>
+          Contact
+        </NavLink>
+        <NavLink to="/login" style={linkStyle}>
+          Login
+        </NavLink>
       </div>
-    </header>
+
+      {/* Right side: theme toggle */}
+      <ThemeToggle />
+    </nav>
   );
 }
+
+export default Navbar;
