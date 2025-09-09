@@ -4,7 +4,7 @@ import NavBar from "../Components/NavBar";
  function Home() {
   return (
     <>
-    <main className="min-h-[80vh] flex flex-col items-center justify-center">
+    <main className="min-h-[80vh] flex flex-col items-center justify-center bg-cust">
       <h1 className="text-4xl font-extrabold mb-4">Welcome to HomeCare</h1>
       <p className="text-gray-700 mb-8 text-center max-w-xl">
         Find trusted service providers or offer your services. Quick onboarding,

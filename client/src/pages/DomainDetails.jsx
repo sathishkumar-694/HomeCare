@@ -8,7 +8,7 @@ import barberImg from "D://HomeCare//client//src//assets//barber.jpg"
 
 function ClientPage() {
   return (
-    <div className="grid gap-6 p-6 md:grid-cols-2">
+    <div className="grid gap-6 p-6 md:grid-cols-2 bg-cust">
       <ServiceCard
         name="Ramesh Kumar"
         service="Plumber"

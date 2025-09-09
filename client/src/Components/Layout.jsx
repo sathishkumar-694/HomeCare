@@ -1,15 +1,14 @@
+// src/components/Layout.jsx
 import React from "react";
 import Navbar from "./NavBar";
 import Footer from "./Footer";
 
-function Layout({ children }) {
+export default function Layout({ children, showFooter = true }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />    {/* Always stays */}
-      <main className="flex-1">{children}</main>
-      <Footer />    {/* Always stays */}
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-grow">{children}</main>
+      {showFooter && <Footer />}
     </div>
   );
 }
-
-export default Layout;

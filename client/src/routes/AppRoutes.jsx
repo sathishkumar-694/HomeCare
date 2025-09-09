@@ -11,6 +11,8 @@ import Layout from "../Components/Layout";
 import Footer from "../Components/Footer";
 import Login from "../Pages/Login";
 import Register from "../pages/SignUp";
+import Contact from "../pages/Contact";
+import About from "../pages/About"
 
 function AppRoutes() {
   return (
@@ -25,6 +27,9 @@ function AppRoutes() {
         <Route path = "/Footer" element ={<Footer/>}/>
         <Route path="/Login" element = {<Login/>}/>
         <Route path = "/SignUp" element ={<Register/>}/>
+        <Route path = "/Footer" element = {<Footer/>}/>
+        <Route path ="/Contact" element={<Contact/>}/>
+        <Route path="/About" element={<About/>}/>
       </Routes>
 
   );
