@@ -6,6 +6,9 @@ const domains = [
   { id: 1, name: "Plumbing", route: "/domain/plumbing" },
   { id: 2, name: "Cleaning", route: "/domain/cleaning" },
   { id: 3, name: "Salon", route: "/domain/salon" },
+  { id: 4 , name : "Bike Repair" , route:"/domain/bike-repair"} ,
+  { id: 5 , name : "Home Appliances Repair" , route:"/domain/appliances-repair"}
+
 ];
 
 function ClientPage() {
@@ -20,6 +23,7 @@ function ClientPage() {
             <Link to="/domain/cleaning"></Link>
             <Link to="/domain/salon"></Link>
             <Link to="/domain/bike-repair"></Link>
+            <Link to="/domain/appliances-repair"></Link>
           </Link>
         ))}
       </div>

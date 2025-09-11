@@ -47,8 +47,7 @@ function Navbar() {
       </div>
 
       {/* Right side: theme toggle */}
-      <ThemeToggle />
-    </nav>
+      </nav>
   );
 }
 

@@ -13,6 +13,7 @@ import Login from "../Pages/Login";
 import Register from "../pages/SignUp";
 import Contact from "../pages/Contact";
 import About from "../pages/About"
+import vendorRegister from "../pages/vendorRegister";
 
 function AppRoutes() {
   return (
@@ -30,6 +31,7 @@ function AppRoutes() {
         <Route path = "/Footer" element = {<Footer/>}/>
         <Route path ="/Contact" element={<Contact/>}/>
         <Route path="/About" element={<About/>}/>
+        <Route path="/vendorRegister" element={<vendorRegister/>}/>
       </Routes>
 
   );

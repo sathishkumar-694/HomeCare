@@ -1,18 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import VendorRegister from "./vendorRegister"; // import your vendor form
 
 export default function Services() {
   const [role, setRole] = useState("client");
+  const [showForm, setShowForm] = useState(false); // new state to control showing vendor form
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (role === "client") {
-      navigate("/client"); // this should match your route path
+      navigate("/client"); // keep existing client flow
     } else {
-      navigate("/provider");
+      setShowForm(true); // show vendor form inline instead of routing
     }
   };
+
+  if (showForm && role === "provider") {
+    // Render vendor form directly
+    return <VendorRegister />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
