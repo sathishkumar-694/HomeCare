@@ -14,7 +14,8 @@ import Register from "../pages/SignUp";
 import Contact from "../pages/Contact";
 import About from "../pages/About"
 import vendorRegister from "../pages/vendorRegister";
-
+import Admin from "../pages/Admin";
+import PrivateRoute from "../auth/privateRoute";
 function AppRoutes() {
   return (
       <Routes>
@@ -32,6 +33,7 @@ function AppRoutes() {
         <Route path ="/Contact" element={<Contact/>}/>
         <Route path="/About" element={<About/>}/>
         <Route path="/vendorRegister" element={<vendorRegister/>}/>
+        <Route path="/admin" element={<Admin />}/>
       </Routes>
 
   );

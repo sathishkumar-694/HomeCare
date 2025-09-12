@@ -44,6 +44,12 @@ function Navbar() {
         <NavLink to="/login" style={linkStyle}>
           Login
         </NavLink>
+        <NavLink
+          to="/admin" 
+          className="bg-red-500 px-3 py-1 rounded-lg hover:bg-red-600 transition"
+        >
+          Admin
+        </NavLink>
       </div>
 
       {/* Right side: theme toggle */}
