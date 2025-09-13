@@ -15,12 +15,14 @@ import Contact from "../pages/Contact";
 import About from "../pages/About"
 import vendorRegister from "../pages/vendorRegister";
 import Admin from "../pages/Admin";
+import Users from "../pages/Users"
 import PrivateRoute from "../auth/privateRoute";
 function AppRoutes() {
   return (
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/" element={<NavBar/>}/>
+        <Route path = "/Users/:username" element = {<Users/>}/> 
         <Route path="/services" element={<Services />} />
         <Route path="/client" element={<ClientPage />} />
         <Route path="/domain/:domainName" element={<DomainDetails />} />
