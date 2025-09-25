@@ -1,6 +1,5 @@
-// src/pages/VendorRegister.jsx
 import React, { useState } from "react";
-import {Link} from "react-router-dom"
+
 export default function VendorRegister() {
   const [form, setForm] = useState({
     name: "",
@@ -8,21 +7,40 @@ export default function VendorRegister() {
     service: "",
     nationalProof: "",
     location: "",
-    photo: null,
+    photo: "",
   });
 
   function handleChange(e) {
     const { name, value, files } = e.target;
     setForm({
       ...form,
-      [name]: files ? files[0] : value,
+      [name]: files ? files[0].name : value, // for now, just store file name
     });
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    console.log("Vendor details:", form);
-    alert(`Thank you ${form.name}, your vendor application is submitted!`);
+  async function handleSubmit(e) {
+  e.preventDefault();
+
+  const formData = new FormData();
+  formData.append("name", form.name);
+  formData.append("shopName", form.shopName);
+  formData.append("service", form.service);
+  formData.append("nationalProof", form.nationalProof);
+  formData.append("location", form.location);
+  formData.append("photo", form.photo);
+
+  try {
+    const res = await fetch("http://localhost:5000/api/vendors", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to submit vendor application");
+    }
+
+    const data = await res.json();
+    alert(`Thank you ${data.name}, your application was submitted!`);
     setForm({
       name: "",
       shopName: "",
@@ -31,7 +49,11 @@ export default function VendorRegister() {
       location: "",
       photo: null,
     });
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error submitting application");
   }
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-6">
@@ -44,72 +66,29 @@ export default function VendorRegister() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Your Full Name"
-            value={form.name}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none"
-            required
-          />
+          <input type="text" name="name" placeholder="Your Full Name"
+            value={form.name} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border" required />
+          
+          <input type="text" name="shopName" placeholder="Shop/Service Name"
+            value={form.shopName} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border" required />
+          
+          <input type="text" name="service" placeholder="Type of Service (Plumbing, Salon, Cleaning)"
+            value={form.service} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border" required />
 
-          <input
-            type="text"
-            name="shopName"
-            placeholder="Shop/Service Name"
-            value={form.shopName}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none"
-            required
-          />
+          <input type="text" name="nationalProof" placeholder="National Proof ID"
+            value={form.nationalProof} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border" required />
 
-          <input
-            type="text"
-            name="service"
-            placeholder="Type of Service (e.g., Plumbing, Salon, Cleaning)"
-            value={form.service}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none"
-            required
-          />
-
-          <input
-            type="text"
-            name="nationalProof"
-            placeholder="National Proof ID (Aadhar, PAN, etc.)"
-            value={form.nationalProof}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none"
-            required
-          />
-
-          <input
-            type="text"
-            name="location"
-            placeholder="Shop Location"
-            value={form.location}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-400 outline-none"
-            required
-          />
+          <input type="text" name="location" placeholder="Shop Location"
+            value={form.location} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border" required />
 
           <div>
             <label className="block text-gray-700 mb-2">Shop Photograph</label>
-            <input
-              type="file"
-              name="photo"
-              accept="image/*"
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl"
-              required
-            />
+            <input type="file" name="photo" accept="image/*" onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-xl" />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-3 rounded-xl shadow-md transition duration-200"
-          >
+          <button type="submit"
+            className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-3 rounded-xl shadow-md transition">
             Submit Application 🚀
           </button>
         </form>

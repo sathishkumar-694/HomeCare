@@ -2,9 +2,9 @@ import React from "react";
 import ServiceCard from "../Components/ServiceCard";
 
 // Import images from assets
-import plumberImg from "D://HomeCare//client//src//assets//plumber.jpg";
-import cleanerImg from "D://HomeCare//client//src//assets//cleaner.webp";
-import barberImg from "D://HomeCare//client//src//assets//barber.jpg"
+import plumberImg from "../assets/barber.jpg";
+import cleanerImg from "../assets/plumber.jpg";
+import barberImg from "../assets/barber.jpg";
 
 function ClientPage() {
   return (
