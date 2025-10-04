@@ -7,53 +7,63 @@ export default function VendorRegister() {
     service: "",
     nationalProof: "",
     location: "",
-    photo: "",
+    photo: null, // ✅ Store actual file, not filename
   });
 
   function handleChange(e) {
     const { name, value, files } = e.target;
     setForm({
       ...form,
-      [name]: files ? files[0].name : value, // for now, just store file name
+      [name]: files ? files[0] : value, // ✅ Store file object, not name
     });
   }
 
   async function handleSubmit(e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  const formData = new FormData();
-  formData.append("name", form.name);
-  formData.append("shopName", form.shopName);
-  formData.append("service", form.service);
-  formData.append("nationalProof", form.nationalProof);
-  formData.append("location", form.location);
-  formData.append("photo", form.photo);
-
-  try {
-    const res = await fetch("http://localhost:5000/api/vendors", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to submit vendor application");
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("shopName", form.shopName);
+    formData.append("service", form.service);
+    formData.append("nationalProof", form.nationalProof);
+    formData.append("location", form.location);
+    
+    // ✅ Only append photo if it exists
+    if (form.photo) {
+      formData.append("photo", form.photo);
     }
 
-    const data = await res.json();
-    alert(`Thank you ${data.name}, your application was submitted!`);
-    setForm({
-      name: "",
-      shopName: "",
-      service: "",
-      nationalProof: "",
-      location: "",
-      photo: null,
-    });
-  } catch (err) {
-    console.error(err);
-    alert("❌ Error submitting application");
+    try {
+      const res = await fetch("http://localhost:5000/api/vendor/register", { // ✅ Fixed endpoint
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to submit vendor application");
+      }
+
+      const data = await res.json();
+      alert(`✅ Thank you ${data.vendor.name}, your application was submitted!`);
+      
+      // ✅ Reset form properly
+      setForm({
+        name: "",
+        shopName: "",
+        service: "",
+        nationalProof: "",
+        location: "",
+        photo: null,
+      });
+      
+      // ✅ Clear file input
+      e.target.reset();
+      
+    } catch (err) {
+      console.error(err);
+      alert("❌ Error submitting application");
+    }
   }
-}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-6">

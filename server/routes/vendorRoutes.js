@@ -1,6 +1,6 @@
-const express = require("express");
-const multer = require("multer");
-const Vendor = require("../models/Vendor");
+import express from "express";
+import multer from "multer";
+import Vendor from "../models/Vendor.js";
 
 const router = express.Router();
 
@@ -36,4 +36,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

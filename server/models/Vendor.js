@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const vendorSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -6,7 +6,8 @@ const vendorSchema = new mongoose.Schema({
   service: { type: String, required: true },
   nationalProof: { type: String, required: true },
   location: { type: String, required: true },
-  photo: { type: String }, // filename of uploaded photo
+  photo: { type: String },
+  status: { type: String, enum: ["pending", "approved"], default: "pending" },
 }, { timestamps: true });
 
-module.exports = mongoose.model("Vendor", vendorSchema);
+export default mongoose.model("Vendor", vendorSchema);
