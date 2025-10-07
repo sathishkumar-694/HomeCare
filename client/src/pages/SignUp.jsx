@@ -1,20 +1,32 @@
-
 import React, { useState } from "react";
 import InputField from "../Components/InputField.jsx";
 import Button from "../Components/Button.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { API } from "../routes/api.js";
+import axios from "axios";
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log("SignUp", form);
-    alert("Submitted (console)");
+    setLoading(true);
+    try {
+      const res = await axios.post(API.USER.REGISTER(), form);
+      alert(res.data.message);
+      navigate("/login"); // redirect to login after signup
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -38,6 +50,7 @@ export default function SignUp() {
             onChange={handleChange}
             placeholder="you@example.com"
           />
+
           <InputField
             label="Password"
             name="password"
@@ -46,11 +59,9 @@ export default function SignUp() {
             onChange={handleChange}
             placeholder="Enter your password"
           />
-          <Button
-            type="submit"
-            className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300"
-          >
-            Register
+
+          <Button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+            {loading ? "Registering..." : "Register"}
           </Button>
         </form>
 

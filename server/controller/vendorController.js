@@ -1,33 +1,34 @@
 import Vendor from "../models/Vendor.js";
 
-// POST: /api/vendor/register
+// POST /api/vendor/register
 export const registerVendor = async (req, res) => {
   try {
-    const { ownerName, shopName, service, nationalProof, location } = req.body;
+    const { name, shopName, service, nationalProof, location } = req.body;
 
     const vendor = new Vendor({
-      ownerName,
+      name,
       shopName,
       service,
       nationalProof,
       location,
-      photo: req.file ? req.file.filename : null, // multer handles file uploads
-      user: req.user?._id, // if logged in
+      photo: req.file ? req.file.filename : null,
     });
 
     await vendor.save();
     res.status(201).json({ message: "Vendor registered successfully!", vendor });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Vendor registration failed:", err);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
-// GET: /api/vendor
+// GET /api/vendor
 export const getVendors = async (req, res) => {
   try {
-    const vendors = await Vendor.find();
+    const vendors = await Vendor.find().sort({ createdAt: -1 });
     res.json(vendors);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error fetching vendors:", err);
+    res.status(500).json({ error: "Server error" });
   }
 };

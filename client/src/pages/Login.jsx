@@ -1,19 +1,44 @@
 import React, { useState } from "react";
 import InputField from "../Components/InputField.jsx";
 import Button from "../Components/Button.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { API } from "../routes/api.js"; // your path
+import axios from "axios";
 
 export default function Login() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log("login", form);
-    alert("Submitted (console)");
+    setLoading(true);
+    try {
+      const res = await axios.post(API.USER.LOGIN(), form);
+
+      // Save token and user info in localStorage
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      alert(res.data.message || "Login successful");
+
+      // Redirect to dashboard based on role
+      if (res.data.user.role === "vendor") {
+        navigate("/vendor-dashboard");
+      } else {
+        navigate("/user-dashboard");
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -23,11 +48,11 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <InputField
-            label="Username"
-            name="username"
-            value={form.username}
+            label="Email"
+            name="email"
+            value={form.email}
             onChange={handleChange}
-            placeholder="Enter your username"
+            placeholder="Enter your email"
           />
 
           <InputField
@@ -39,8 +64,10 @@ export default function Login() {
             placeholder="Enter your password"
           />
 
-          <Button type="submit" className="w-full bg-blue-600 text-white font-semibold py-2 px-4 
-          rounded hover:bg-blue-700transition duration-300">Login</Button></form>
+          <Button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+            {loading ? "Logging in..." : "Login"}
+          </Button>
+        </form>
 
         <p className="mt-6 text-sm text-center">
           Don't have an account?{" "}

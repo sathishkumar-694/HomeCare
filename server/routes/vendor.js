@@ -27,7 +27,7 @@ router.post("/register", upload.single("photo"), async (req, res) => {
   }
 });
 
-// GET: Fetch all vendors (for Admin Dashboard)
+// GET: Fetch all vendors
 router.get("/", async (req, res) => {
   try {
     const vendors = await Vendor.find().sort({ createdAt: -1 });
