@@ -93,7 +93,8 @@ export default function AdminDashboard() {
   const [vendors, setVendors] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/vendor")  // ✅ Changed from /vendors to /vendor
+    fetch("http://localhost:5000/api/vendor")  
+    // ✅ Changed from /vendors to /vendor
       .then((res) => res.json())
       .then((data) => setVendors(data))
       .catch((err) => console.error("Error fetching vendors:", err));
