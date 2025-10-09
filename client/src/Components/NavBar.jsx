@@ -7,8 +7,28 @@ function Navbar() {
   const [dropdown, setDropdown] = useState(false);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
+
+    if (token && storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      setUser(null);
+    }
+
+    // Listen for login/logout updates
+    const syncLoginState = () => {
+      const updatedUser = localStorage.getItem("user");
+      const updatedToken = localStorage.getItem("token");
+      if (updatedUser && updatedToken) {
+        setUser(JSON.parse(updatedUser));
+      } else {
+        setUser(null);
+      }
+    };
+
+    window.addEventListener("storage", syncLoginState);
+    return () => window.removeEventListener("storage", syncLoginState);
   }, []);
 
   const handleLogout = () => {
@@ -16,6 +36,7 @@ function Navbar() {
     localStorage.removeItem("token");
     setUser(null);
     navigate("/login");
+    window.dispatchEvent(new Event("storage"));
   };
 
   const linkStyle = ({ isActive }) => ({
@@ -32,20 +53,39 @@ function Navbar() {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "12px 24px",
-        backgroundColor: localStorage.getItem("theme") === "dark" ? "#1a202c" : "#ffffff",
-        color: localStorage.getItem("theme") === "dark" ? "#f8f9fa" : "#1a202c",
+        backgroundColor:
+          localStorage.getItem("theme") === "dark" ? "#1a202c" : "#ffffff",
+        color:
+          localStorage.getItem("theme") === "dark" ? "#f8f9fa" : "#1a202c",
         transition: "all 0.3s ease",
       }}
     >
-      <h1 style={{ fontSize: "20px", fontWeight: "bold" }}>HomeCare</h1>
+      <h1
+        onClick={() => navigate("/")}
+        style={{ fontSize: "20px", fontWeight: "bold", cursor: "pointer" }}
+      >
+        HomeCare
+      </h1>
 
       <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-        <NavLink to="/" style={linkStyle}>Home</NavLink>
-        <NavLink to="/about" style={linkStyle}>About</NavLink>
-        <NavLink to="/services" style={linkStyle}>Services</NavLink>
-        <NavLink to="/contact" style={linkStyle}>Contact</NavLink>
+        <NavLink to="/" style={linkStyle}>
+          Home
+        </NavLink>
+        <NavLink to="/about" style={linkStyle}>
+          About
+        </NavLink>
+        <NavLink to="/services" style={linkStyle}>
+          Services
+        </NavLink>
+        <NavLink to="/contact" style={linkStyle}>
+          Contact
+        </NavLink>
 
-        {!user && <NavLink to="/login" style={linkStyle}>Login</NavLink>}
+        {!user && (
+          <NavLink to="/login" style={linkStyle}>
+            Login
+          </NavLink>
+        )}
 
         {user && (
           <div style={{ position: "relative" }}>
@@ -74,7 +114,10 @@ function Navbar() {
                   position: "absolute",
                   top: "44px",
                   right: "0",
-                  backgroundColor: localStorage.getItem("theme") === "dark" ? "#2d3748" : "#fff",
+                  backgroundColor:
+                    localStorage.getItem("theme") === "dark"
+                      ? "#2d3748"
+                      : "#fff",
                   border: "1px solid #ccc",
                   borderRadius: "8px",
                   boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
@@ -83,14 +126,32 @@ function Navbar() {
                 }}
               >
                 <button
-                  onClick={() => { navigate("/profile"); setDropdown(false); }}
-                  style={{ width: "100%", padding: "10px", textAlign: "left", border: "none", background: "transparent", cursor: "pointer" }}
+                  onClick={() => {
+                    navigate("/profile");
+                    setDropdown(false);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    textAlign: "left",
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+                  }}
                 >
                   View Profile
                 </button>
                 <button
                   onClick={handleLogout}
-                  style={{ width: "100%", padding: "10px", textAlign: "left", border: "none", background: "transparent", cursor: "pointer", color: "#ef4444" }}
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    textAlign: "left",
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+                    color: "#ef4444",
+                  }}
                 >
                   Logout
                 </button>

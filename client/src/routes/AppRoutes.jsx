@@ -20,7 +20,7 @@ import PrivateRoute from "../auth/privateRoute";
 import Profile from "../pages/Profile";
 import Support from "../pages/Support";
 import Dashboard from "../pages/Dashboard"; // new dashboard page
-
+import PaymentPage from "../pages/paymentPage";
 function AppRoutes() {
   return (
     <Routes>
@@ -45,6 +45,9 @@ function AppRoutes() {
       {/* New dashboard routes */}
       <Route path="/user-dashboard" element={<Dashboard />} />
       <Route path="/vendor-dashboard" element={<Dashboard />} />
+      
+      <Route path="/payment/:serviceId" element={<PaymentPage />} />
+
     </Routes>
   );
 }

@@ -2,12 +2,31 @@
 import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  vendor: { type: mongoose.Schema.Types.ObjectId, ref: "Vendor", required: true },
-  service: { type: String, required: true },
-  date: { type: Date, required: true },
-  status: { type: String, default: "pending" }, // pending, confirmed, completed
-  createdAt: { type: Date, default: Date.now }
+  user: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "User", 
+    required: true 
+  },
+  vendor: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "Vendor", 
+    required: true 
+  },
+  service: { 
+    type: String, 
+    required: true 
+  },
+  date: { 
+    type: Date, 
+    required: true 
+  },
+  status: { 
+    type: String, 
+    enum: ["pending", "confirmed", "completed", "cancelled"], // Using enum for data integrity
+    default: "pending" 
+  },
+}, { 
+  timestamps: true // Automatically adds createdAt and updatedAt
 });
 
 const Booking = mongoose.model("Booking", bookingSchema);

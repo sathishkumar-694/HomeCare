@@ -1,26 +1,63 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import VendorRegister from "./vendorRegister"; // import your vendor form
+import VendorRegister from "./vendorRegister";
 
 export default function Services() {
   const [role, setRole] = useState("client");
-  const [showForm, setShowForm] = useState(false); // new state to control showing vendor form
+  const [showForm, setShowForm] = useState(false);
   const navigate = useNavigate();
+
+  // Example services list (you can replace this with your backend data later)
+  const services = [
+    { id: 1, name: "Plumbing", price: 500, description: "Fix leaks and pipelines" },
+    { id: 2, name: "Home Cleaning", price: 800, description: "Deep cleaning service" },
+    { id: 3, name: "Salon at Home", price: 600, description: "Personal grooming at home" },
+  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (role === "client") {
-      navigate("/client"); // keep existing client flow
+      // When client is selected → show service selection
+      setShowForm(true);
     } else {
-      setShowForm(true); // show vendor form inline instead of routing
+      // When provider is selected → go to vendor form
+      navigate("/vendor-register");
     }
   };
 
-  if (showForm && role === "provider") {
-    // Render vendor form directly
+  // if provider, render VendorRegister directly
+  if (role === "provider") {
     return <VendorRegister />;
   }
 
+  // if client and showForm is true → show services list
+  if (role === "client" && showForm) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center py-8">
+        <h2 className="text-3xl font-bold mb-6 text-center">Available Services</h2>
+        <div className="grid md:grid-cols-3 gap-6 w-full max-w-6xl px-6">
+          {services.map((service) => (
+            <div
+              key={service.id}
+              className="border p-6 rounded-lg shadow-md bg-white hover:shadow-lg transition"
+            >
+              <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
+              <p className="text-gray-600 mb-2">{service.description}</p>
+              <p className="text-lg font-bold text-blue-600 mb-4">₹{service.price}</p>
+              <button
+                onClick={() => navigate(`/payment/${service.id}`, { state: service })}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Book Now
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Initial role selection view
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg">

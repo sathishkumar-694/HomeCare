@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import InputField from "../Components/InputField.jsx";
 import Button from "../Components/Button.jsx";
 import { Link, useNavigate } from "react-router-dom";
-import { API } from "../routes/api.js"; // your path
+import { API } from "../routes/api.js";
 import axios from "axios";
 
 export default function Login() {
@@ -11,28 +11,33 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value.trim() }));
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
+
     try {
       const res = await axios.post(API.USER.LOGIN(), form);
 
-      // Save token and user info in localStorage
+      // Clear any existing session
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      // Save new token & user
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      alert(res.data.message || "Login successful");
-
-      // Redirect to dashboard based on role
+      // No alert; redirect instead
       if (res.data.user.role === "vendor") {
         navigate("/vendor-dashboard");
       } else {
         navigate("/user-dashboard");
       }
 
+      // Trigger navbar update
+      window.dispatchEvent(new Event("storage"));
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || "Login failed");
@@ -64,14 +69,19 @@ export default function Login() {
             placeholder="Enter your password"
           />
 
-          <Button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          >
             {loading ? "Logging in..." : "Login"}
           </Button>
         </form>
 
         <p className="mt-6 text-sm text-center">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-blue-600">Register</Link>
+          <Link to="/signup" className="text-blue-600">
+            Register
+          </Link>
         </p>
       </div>
     </div>

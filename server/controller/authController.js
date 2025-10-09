@@ -3,17 +3,31 @@ import Vendor from "../models/Vendor.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// User registration
+// User registration (UPDATED)
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    if (!req.file) {
+      return res.status(400).json({ message: "A profile image is required." });
+    }
+
+    // Get the path of the uploaded file
+    const imagePath = req.file.path;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({ username, email, password: hashedPassword });
+    const user = await User.create({ 
+      username, 
+      email, 
+      password: hashedPassword,
+      // Add the image path to the user document before saving
+      // IMPORTANT: Replace 'profilePicture' with the actual field name from your User model
+      profilePicture: imagePath 
+    });
+
     res.status(201).json({ message: "User registered successfully", user });
   } catch (err) {
     console.error("User registration failed:", err);
@@ -21,8 +35,9 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// Login (User or Vendor)
+// Login (User or Vendor) - no changes needed here
 export const loginUser = async (req, res) => {
+  // ... your existing login code remains the same
   const { email, password } = req.body;
   try {
     let account = await User.findOne({ email });
@@ -48,6 +63,6 @@ export const loginUser = async (req, res) => {
     });
   } catch (err) {
     console.error("Login failed:", err);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "err.message" });
   }
 };

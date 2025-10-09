@@ -2,13 +2,21 @@ import express from "express";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import upload from "../middleware/multer.js";
 
 const router = express.Router();
 
 // POST /users/register
-router.post("/register", async (req, res) => {
+router.post("/register", upload.single('profileImage'), async (req, res) => {
   try {
     const { username, email, password } = req.body;
+
+    // The check that required a profile picture has been removed.
+    // We now handle cases where an image may or may not be provided.
+    let imagePath = null;
+    if (req.file) {
+      imagePath = req.file.path;
+    }
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -19,12 +27,19 @@ router.post("/register", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new User({
-      name: username, // map frontend username → backend name
+    // Build the new user object
+    const newUser = {
+      name: username,
       email,
       password: hashedPassword,
-    });
+    };
 
+    // Only add the profile picture to the database if the user uploaded one
+    if (imagePath) {
+      newUser.profilePicture = imagePath;
+    }
+
+    const user = new User(newUser);
     await user.save();
 
     res.status(201).json({ message: "User registered successfully", user });
@@ -34,7 +49,8 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// POST /users/login
+
+// POST /users/login (No changes needed)
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -48,10 +64,10 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-    res.json({ 
-      message: "Login successful", 
-      token, 
-      user: { id: user._id, name: user.name, email: user.email, role: user.role } 
+    res.json({
+      message: "Login successful",
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
   } catch (err) {
     console.error("Login Error:", err);
@@ -59,7 +75,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// GET user profile
+// GET user profile (No changes needed)
 router.get("/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
@@ -71,7 +87,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// UPDATE user profile
+// UPDATE user profile (No changes needed)
 router.put("/:id", async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
