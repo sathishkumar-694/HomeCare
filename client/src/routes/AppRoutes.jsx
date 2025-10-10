@@ -8,7 +8,6 @@ import Footer from "../Components/Footer";
 // Pages
 import Home from "../pages/Home";
 import Services from "../pages/Services";
-import ClientPage from "../pages/ClientPage";
 import DomainDetails from "../pages/DomainDetails";
 import Login from "../pages/Login";
 import Register from "../pages/SignUp";
@@ -38,7 +37,6 @@ function AppRoutes() {
 
         {/* 🧰 Services */}
         <Route path="/services" element={<Services />} />
-        <Route path="/client" element={<ClientPage />} />
         <Route path="/domain/:domainName" element={<DomainDetails />} />
 
         {/* 🔐 Authentication */}

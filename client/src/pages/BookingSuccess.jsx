@@ -18,7 +18,7 @@ export default function BookingSuccess() {
         <p className="text-gray-600 mb-6">Date: {payment.time}</p>
 
         <button
-          onClick={() => navigate("/client")}
+          onClick={() => navigate("/profile")}
           className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
         >
           Back to Services

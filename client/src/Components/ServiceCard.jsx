@@ -8,9 +8,12 @@ function ServiceCard({ name, service, desc, photo }) {
         <h3 className="text-xl font-bold">{name}</h3>
         <p className="text-sm text-gray-500">{service}</p>
         <p className="mt-2 text-gray-700">{desc}</p>
-        <button className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-          Book Now
-        </button>
+        <button
+                onClick={() => navigate(`/payment/${service.id}`, { state: service })}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Book Now
+              </button>
       </div>
 
       {/* Right side: photo */}
