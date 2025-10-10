@@ -88,13 +88,13 @@ export default function AdminDashboard() {
 }
 */
 import React, { useEffect, useState } from "react";
+import { API } from "../routes/api";
 
-export default function AdminDashboard() {
+export default function AdminVendors() {
   const [vendors, setVendors] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/vendor")  
-    // ✅ Changed from /vendors to /vendor
+    fetch(API.VENDOR.GET_ALL())
       .then((res) => res.json())
       .then((data) => setVendors(data))
       .catch((err) => console.error("Error fetching vendors:", err));
@@ -125,9 +125,9 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-      <table className="w-full border">
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Manage Vendors</h1>
+      <table className="w-full border-collapse border">
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">Name</th>

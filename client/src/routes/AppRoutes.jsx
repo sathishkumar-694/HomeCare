@@ -1,11 +1,11 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-// Components
+// Common Components
 import NavBar from "../Components/NavBar";
 import Footer from "../Components/Footer";
 
-// Pages
+// User Pages
 import Home from "../pages/Home";
 import Services from "../pages/Services";
 import DomainDetails from "../pages/DomainDetails";
@@ -14,19 +14,27 @@ import Register from "../pages/SignUp";
 import Contact from "../pages/Contact";
 import About from "../pages/About";
 import VendorRegister from "../pages/vendorRegister";
-import Admin from "../pages/Admin";
 import Users from "../pages/Users";
 import Profile from "../pages/Profile";
 import Support from "../pages/Support";
 import Dashboard from "../pages/Dashboard";
-import PaymentPage from "../pages/paymentPage";      // ✅ renamed for clarity
-import BookingSuccess from "../pages/BookingSuccess"; // ✅ success page
+import PaymentPage from "../pages/paymentPage";
+import BookingSuccess from "../pages/BookingSuccess";
+
+// Admin Pages
+import AdminLogin from "../pages/AdminLogin";
+import AdminDashboard from "../pages/AdminDashboard";
+import AdminUsers from "../pages/AdminUsers";
+import AdminVendors from "../pages/AdminVendors";
+import AdminQueries from "../pages/Queries";
+
+// Auth Protection
 import PrivateRoute from "../auth/privateRoute";
 
 function AppRoutes() {
   return (
     <>
-      {/* ✅ Navbar always visible */}
+      {/* ✅ Navbar visible for general users */}
       <NavBar />
 
       <Routes>
@@ -44,8 +52,7 @@ function AppRoutes() {
         <Route path="/signup" element={<Register />} />
         <Route path="/vendor-register" element={<VendorRegister />} />
 
-        {/* 👑 Admin & User */}
-        <Route path="/admin" element={<Admin />} />
+        {/* 👤 User Pages */}
         <Route path="/users/:username" element={<Users />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/support" element={<Support />} />
@@ -54,9 +61,16 @@ function AppRoutes() {
         <Route path="/user-dashboard" element={<Dashboard />} />
         <Route path="/vendor-dashboard" element={<Dashboard />} />
 
-        {/* 💳 Booking Flow */}
-        <Route path="/payment/:serviceId" element={<PaymentPage />} /> {/* ✅ Payment route */}
-        <Route path="/payment-success" element={<BookingSuccess />} /> {/* ✅ Success route */}
+        {/* 💳 Payment Flow */}
+        <Route path="/payment/:serviceId" element={<PaymentPage />} />
+        <Route path="/payment-success" element={<BookingSuccess />} />
+
+        {/* 👑 Admin Section */}
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/vendors" element={<AdminVendors />} />
+        <Route path="/admin/queries" element={<AdminQueries />} />
       </Routes>
 
       {/* ✅ Footer always visible */}
