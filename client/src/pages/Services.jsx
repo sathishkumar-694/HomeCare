@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VendorRegister from "./vendorRegister";
@@ -67,7 +68,7 @@ export default function Services() {
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* Client Option */}
+         
           <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition">
             <input
               type="radio"
@@ -85,7 +86,6 @@ export default function Services() {
             </div>
           </label>
 
-          {/* Service Provider Option */}
           <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition">
             <input
               type="radio"
@@ -114,3 +114,7 @@ export default function Services() {
     </div>
   );
 }
+
+
+// src/pages/Services.js
+// src/pages/Services.js

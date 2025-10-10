@@ -26,10 +26,8 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Navbar />
         <AppRoutes />
-        <Footer />
-      </BrowserRouter>
+        </BrowserRouter>
     </AuthProvider>
   );
 }

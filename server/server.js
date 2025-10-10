@@ -1,3 +1,5 @@
+// FILE: server.js (Simplified Version)
+
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -8,28 +10,24 @@ import vendorRoutes from "./routes/vendor.js";
 import userRoutes from "./routes/User.js";
 import adminRoutes from "./routes/admin.js";
 import supportRoutes from "./routes/support.js";
+import bookingRoutes from "./routes/booking.js"; 
 
-// Load environment variables from .env
 dotenv.config();
-
-// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// Middlewares
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); // This can now be at the top
 
 // Routes
-app.use("/api/vendor", vendorRoutes);  // Vendor registration and fetch
-app.use("/api/users", userRoutes);     // User registration, login, profile
-app.use("/api/admin", adminRoutes);    // Admin routes
-app.use("/api/support", supportRoutes); // Support requests
+app.use("/api/vendor", vendorRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/support", supportRoutes);
+app.use("/api/bookings", bookingRoutes); // Use the simplified booking routes
 
-// Base route for testing
 app.get("/", (req, res) => res.send("API is running"));
 
-// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
