@@ -85,7 +85,7 @@ export default function VendorRegister() {
           <input type="text" name="service" placeholder="Type of Service (Plumbing, Salon, Cleaning)"
             value={form.service} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border" required />
 
-            <input type="text" name="service" placeholder="Contact details"
+            <input type="text" name="contact" placeholder="Contact details"
             value={form.contact} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border" required />
 
           <input type="text" name="location" placeholder="Shop Location"

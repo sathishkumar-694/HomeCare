@@ -1,3 +1,4 @@
+/*
 import React, { useEffect, useState } from "react";
 
 export default function Profile() {
@@ -7,51 +8,83 @@ export default function Profile() {
   const [bookingsLoading, setBookingsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
 
-  const storedUser = JSON.parse(localStorage.getItem("user")) || {};
-  const token = localStorage.getItem("token") || "";
+  // Get user data from memory (simulating localStorage)
+  const [storedUser] = useState({ id: "user123", role: "user", name: "John Doe", email: "john@example.com" });
+  const [token] = useState("sample-token");
   const role = storedUser?.role || "user";
 
   useEffect(() => {
+    // Simulate API call for user profile
     const fetchData = async () => {
       if (!storedUser.id || !token) {
         setLoading(false);
         return;
       }
       
-      try {
-        const res = await fetch(`http://localhost:5000/api/${role}s/${storedUser.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
+      // Simulated user data
+      setTimeout(() => {
+        setUser({
+          _id: storedUser.id,
+          name: storedUser.name,
+          email: storedUser.email,
+          phone: "+1 234 567 8900",
+          address: "123 Main St, City, State"
         });
-        const data = await res.json();
-        setUser(data);
         setLoading(false);
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-        setLoading(false);
-      }
+      }, 500);
     };
     fetchData();
   }, [role, storedUser.id, token]);
 
   useEffect(() => {
+    // Simulate API call for bookings
     const fetchBookings = async () => {
-      // Only fetch bookings for regular users, not vendors
       if (role !== "user" || !storedUser.id || !token) {
         setBookingsLoading(false);
         return;
       }
 
-      try {
-        const res = await fetch(`http://localhost:5000/api/bookings/user/${storedUser.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setBookings(data.bookings || data || []);
+      // Simulated booking data
+      setTimeout(() => {
+        setBookings([
+          {
+            _id: "1",
+            shopName: "Elite Salon & Spa",
+            service: "Hair Cut & Styling",
+            date: "2025-10-15T10:00:00Z",
+            time: "10:00 AM",
+            status: "confirmed",
+            contact: "+1 555-0123",
+            location: "123 Beauty Ave",
+            notes: "Please use organic products",
+            createdAt: "2025-10-08T09:00:00Z"
+          },
+          {
+            _id: "2",
+            vendorName: "Green Thumb Landscaping",
+            service: "Lawn Maintenance",
+            date: "2025-10-20T14:00:00Z",
+            time: "2:00 PM",
+            status: "pending",
+            contact: "+1 555-0456",
+            location: "456 Garden Rd",
+            createdAt: "2025-10-09T11:00:00Z"
+          },
+          {
+            _id: "3",
+            shopName: "Quick Fix Auto",
+            service: "Oil Change",
+            date: "2025-10-05T09:00:00Z",
+            time: "9:00 AM",
+            status: "completed",
+            contact: "+1 555-0789",
+            location: "789 Auto St",
+            notes: "Synthetic oil preferred",
+            createdAt: "2025-10-01T08:00:00Z"
+          }
+        ]);
         setBookingsLoading(false);
-      } catch (err) {
-        console.error("Error fetching bookings:", err);
-        setBookingsLoading(false);
-      }
+      }, 700);
     };
 
     fetchBookings();
@@ -60,18 +93,9 @@ export default function Profile() {
   const handleChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
 
   const handleSave = async () => {
-    try {
-      await fetch(`http://localhost:5000/api/${role}s/${user._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(user),
-      });
-      alert("Profile updated successfully!");
-      setIsEditing(false);
-    } catch (err) {
-      console.error("Error updating profile:", err);
-      alert("Failed to update profile");
-    }
+    // Simulate save
+    alert("Profile updated successfully!");
+    setIsEditing(false);
   };
 
   const getStatusColor = (status) => {
@@ -102,64 +126,100 @@ export default function Profile() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      {/* Profile Section */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h1 className="text-2xl font-bold mb-4">My Profile</h1>
-        <div className="space-y-3">
-          <input
-            name="name"
-            value={user.name || ""}
-            onChange={handleChange}
-            placeholder="Name"
-            className="border p-2 w-full rounded text-sm"
-            disabled={!isEditing}
-          />
-          <input
-            name="email"
-            value={user.email || ""}
-            onChange={handleChange}
-            placeholder="Email"
-            className="border p-2 w-full rounded text-sm"
-            disabled={!isEditing}
-          />
-          {role === "user" && (
-            <input
-              name="phone"
-              value={user.phone || ""}
-              onChange={handleChange}
-              placeholder="Phone"
-              className="border p-2 w-full rounded text-sm"
-              disabled={!isEditing}
-            />
-          )}
-
-          {isEditing ? (
-            <div className="flex gap-2 pt-2">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">My Profile</h1>
+          {!isEditing ? (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Edit Profile
+            </button>
+          ) : (
+            <div className="space-x-2">
               <button
                 onClick={handleSave}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-sm"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
               >
                 Save
               </button>
               <button
                 onClick={() => setIsEditing(false)}
-                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 text-sm"
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
               >
                 Cancel
               </button>
             </div>
-          ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm"
-            >
-              Edit Profile
-            </button>
           )}
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="name"
+                value={user.name || ""}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            ) : (
+              <p className="text-gray-900">{user.name || "N/A"}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            {isEditing ? (
+              <input
+                type="email"
+                name="email"
+                value={user.email || ""}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            ) : (
+              <p className="text-gray-900">{user.email || "N/A"}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+            {isEditing ? (
+              <input
+                type="tel"
+                name="phone"
+                value={user.phone || ""}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            ) : (
+              <p className="text-gray-900">{user.phone || "N/A"}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="address"
+                value={user.address || ""}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            ) : (
+              <p className="text-gray-900">{user.address || "N/A"}</p>
+            )}
+          </div>
+        </div>
       </div>
+
+      {role === "user" && (
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold mb-4">My Bookings</h2>
+          <h2 className="text-xl font-bold mb-4">My Booking History</h2>
           
           {bookingsLoading ? (
             <div className="text-center py-8 text-gray-500">Loading bookings...</div>
@@ -248,7 +308,194 @@ export default function Profile() {
             </div>
           )}
         </div>
-      
+      )}
+    </div>
+  );
+}
+*/
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { API } from "../routes/api";
+
+export default function Profile() {
+  const [user, setUser] = useState({});
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [bookingsLoading, setBookingsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Assuming your user is stored in localStorage after login
+  const storedUser = JSON.parse(localStorage.getItem("user")) || {};
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (!storedUser?._id) {
+      setLoading(false);
+      return;
+    }
+
+    setUser({
+      _id: storedUser._id,
+      name: storedUser.name,
+      email: storedUser.email,
+      phone: storedUser.phone,
+      address: storedUser.address,
+    });
+    setLoading(false);
+  }, [storedUser]);
+
+  // ✅ Fetch actual bookings from backend
+  useEffect(() => {
+    const fetchBookings = async () => {
+      if (!storedUser?._id) {
+        setBookingsLoading(false);
+        return;
+      }
+
+      try {
+        const res = await axios.get(API.BOOKING.USER_BOOKINGS(storedUser._id));
+        setBookings(res.data);
+      } catch (err) {
+        console.error("Error fetching bookings:", err);
+      } finally {
+        setBookingsLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, [storedUser._id]);
+
+  const handleChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
+
+  const handleSave = async () => {
+    try {
+      await axios.put(API.USER.PROFILE(user._id), user);
+      alert("Profile updated successfully!");
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      alert("Failed to update profile");
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case "confirmed":
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  if (loading) return <p className="p-6 text-center">Loading...</p>;
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto">
+      {/* Profile Section (unchanged UI) */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">My Profile</h1>
+          {!isEditing ? (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Edit Profile
+            </button>
+          ) : (
+            <div className="space-x-2">
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => setIsEditing(false)}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Profile Inputs */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {["name", "email", "phone", "address"].map((field) => (
+            <div key={field}>
+              <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                {field}
+              </label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  name={field}
+                  value={user[field] || ""}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              ) : (
+                <p className="text-gray-900">{user[field] || "N/A"}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ✅ Live Booking History */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-xl font-bold mb-4">My Booking History</h2>
+        {bookingsLoading ? (
+          <div className="text-center text-gray-500 py-6">Loading bookings...</div>
+        ) : bookings.length === 0 ? (
+          <div className="text-center text-gray-500 py-6">No bookings yet.</div>
+        ) : (
+          <div className="space-y-4">
+            {bookings.map((b) => (
+              <div
+                key={b._id}
+                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <div>
+                    <h3 className="font-semibold text-lg text-gray-800">{b.service}</h3>
+                    <p className="text-sm text-gray-600">{b.vendorName || b.shopName}</p>
+                  </div>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                      b.status
+                    )}`}
+                  >
+                    {b.status || "Pending"}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700">
+                  📍 {b.location || "No location provided"}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Booked on {formatDate(b.createdAt)} • Scheduled for {formatDate(b.date)}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -6,13 +6,26 @@ import upload from "../middleware/multer.js";
 
 const router = express.Router();
 
-// POST /users/register
+// ============================================
+// 👥 GET ALL USERS (For Admin)
+// ============================================
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find({}).select("-password"); // Exclude passwords
+    res.json(users);
+  } catch (err) {
+    console.error("Get All Users Error:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ============================================
+// 📝 REGISTER USER
+// ============================================
 router.post("/register", upload.single('profileImage'), async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // The check that required a profile picture has been removed.
-    // We now handle cases where an image may or may not be provided.
     let imagePath = null;
     if (req.file) {
       imagePath = req.file.path;
@@ -27,14 +40,12 @@ router.post("/register", upload.single('profileImage'), async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Build the new user object
     const newUser = {
       name: username,
       email,
       password: hashedPassword,
     };
 
-    // Only add the profile picture to the database if the user uploaded one
     if (imagePath) {
       newUser.profilePicture = imagePath;
     }
@@ -49,8 +60,9 @@ router.post("/register", upload.single('profileImage'), async (req, res) => {
   }
 });
 
-
-// POST /users/login (No changes needed)
+// ============================================
+// 🔐 LOGIN USER
+// ============================================
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -75,7 +87,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// GET user profile (No changes needed)
+// ============================================
+// 👤 GET USER PROFILE BY ID
+// ============================================
 router.get("/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
@@ -87,13 +101,29 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// UPDATE user profile (No changes needed)
+// ============================================
+// ✏️ UPDATE USER PROFILE
+// ============================================
 router.put("/:id", async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(user);
   } catch (err) {
     console.error("Update Profile Error:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ============================================
+// 🗑️ DELETE USER (For Admin)
+// ============================================
+router.delete("/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ message: "User deleted successfully" });
+  } catch (err) {
+    console.error("Delete User Error:", err);
     res.status(500).json({ message: err.message });
   }
 });
