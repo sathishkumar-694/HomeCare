@@ -5,7 +5,7 @@ export default function VendorRegister() {
     name: "",
     shopName: "",
     service: "",
-    nationalProof: "",
+    contact: "",
     location: "",
     photo: null, // ✅ Store actual file, not filename
   });
@@ -25,7 +25,7 @@ export default function VendorRegister() {
     formData.append("name", form.name);
     formData.append("shopName", form.shopName);
     formData.append("service", form.service);
-    formData.append("nationalProof", form.nationalProof);
+    formData.append("contact",form.contact);
     formData.append("location", form.location);
     
     // ✅ Only append photo if it exists
@@ -51,7 +51,7 @@ export default function VendorRegister() {
         name: "",
         shopName: "",
         service: "",
-        nationalProof: "",
+        contact:"",
         location: "",
         photo: null,
       });
@@ -85,8 +85,8 @@ export default function VendorRegister() {
           <input type="text" name="service" placeholder="Type of Service (Plumbing, Salon, Cleaning)"
             value={form.service} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border" required />
 
-          <input type="text" name="nationalProof" placeholder="National Proof ID"
-            value={form.nationalProof} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border" required />
+            <input type="text" name="service" placeholder="Contact details"
+            value={form.contact} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border" required />
 
           <input type="text" name="location" placeholder="Shop Location"
             value={form.location} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border" required />

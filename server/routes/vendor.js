@@ -14,7 +14,7 @@ router.post("/register", upload.single("photo"), async (req, res) => {
       name: req.body.name,
       shopName: req.body.shopName,
       service: req.body.service,
-      nationalProof: req.body.nationalProof,
+      contact: req.body.contact,
       location: req.body.location,
       photo: req.file ? req.file.filename : null,
     });

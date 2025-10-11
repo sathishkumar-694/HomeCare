@@ -1,57 +1,43 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { API } from "../routes/api";
 
-export default function AdminQueries() {
+export default function Queries() {
   const [queries, setQueries] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/queries")
-      .then((res) => res.json())
-      .then((data) => {
-        setQueries(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching queries:", err);
-        setLoading(false);
-      });
+    axios.get(API.CONTACT.GET_ALL())
+      .then(res => setQueries(res.data))
+      .catch(err => console.error("Error fetching queries:", err));
   }, []);
 
-  if (loading) {
-    return <div className="p-6 text-lg font-semibold">Loading queries...</div>;
-  }
-
-  if (queries.length === 0) {
-    return <div className="p-6 text-lg font-semibold">No queries found.</div>;
-  }
-
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">User Queries</h1>
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse border rounded-lg shadow-md">
+    <div className="p-6">
+      <h2 className="text-2xl font-semibold mb-4">User Queries</h2>
+      {queries.length === 0 ? (
+        <p>No queries available.</p>
+      ) : (
+        <table className="table-auto w-full border">
           <thead>
-            <tr className="bg-gray-200 text-gray-700">
-              <th className="border p-3 text-left">Name</th>
-              <th className="border p-3 text-left">Email</th>
-              <th className="border p-3 text-left">Message</th>
-              <th className="border p-3 text-left">Date</th>
+            <tr className="bg-gray-200">
+              <th className="px-4 py-2 border">Name</th>
+              <th className="px-4 py-2 border">Email</th>
+              <th className="px-4 py-2 border">Message</th>
+              <th className="px-4 py-2 border">Date</th>
             </tr>
           </thead>
           <tbody>
             {queries.map((q) => (
-              <tr key={q._id} className="hover:bg-gray-100">
-                <td className="border p-3">{q.name}</td>
-                <td className="border p-3">{q.email}</td>
-                <td className="border p-3">{q.message}</td>
-                <td className="border p-3">
-                  {new Date(q.createdAt).toLocaleString()}
-                </td>
+              <tr key={q._id}>
+                <td className="px-4 py-2 border">{q.name}</td>
+                <td className="px-4 py-2 border">{q.email}</td>
+                <td className="px-4 py-2 border">{q.message}</td>
+                <td className="px-4 py-2 border">{new Date(q.createdAt).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
+      )}
     </div>
   );
 }

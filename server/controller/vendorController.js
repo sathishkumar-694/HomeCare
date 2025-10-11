@@ -3,13 +3,13 @@ import Vendor from "../models/Vendor.js";
 // POST /api/vendor/register
 export const registerVendor = async (req, res) => {
   try {
-    const { name, shopName, service, nationalProof, location } = req.body;
+    const { name, shopName, service, contact, location } = req.body;
 
     const vendor = new Vendor({
       name,
       shopName,
       service,
-      nationalProof,
+      contact,
       location,
       photo: req.file ? req.file.filename : null,
     });

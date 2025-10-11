@@ -12,6 +12,10 @@ import adminRoutes from "./routes/admin.js";
 import supportRoutes from "./routes/support.js";
 import bookingRoutes from "./routes/booking.js"; 
 
+import contactRoutes from "./routes/Contact.js";
+
+
+
 dotenv.config();
 connectDB();
 
@@ -26,7 +30,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/support", supportRoutes);
 app.use("/api/bookings", bookingRoutes); // Use the simplified booking routes
-
+app.use("/api/contact", contactRoutes);
 app.get("/", (req, res) => res.send("API is running"));
 
 const PORT = process.env.PORT || 5000;

@@ -1,17 +1,30 @@
 // src/pages/Contact.jsx
 import React, { useState } from "react";
+import axios from "axios";
+import { API } from "../routes/api";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    alert(`Thanks ${form.name}, your message has been sent!`);
-    setForm({ name: "", email: "", message: "" });
+    setLoading(true);
+
+    try {
+      await axios.post(API.CONTACT.SEND(), form);
+      alert(`Thanks ${form.name}, your message has been sent!`);
+      setForm({ name: "", email: "", message: "" });
+    } catch (err) {
+      console.error("Error submitting query:", err);
+      alert("Failed to send message. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -54,9 +67,12 @@ export default function Contact() {
           />
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 rounded-xl shadow-md transition duration-200"
+            disabled={loading}
+            className={`w-full ${
+              loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+            } text-white font-medium py-3 rounded-xl shadow-md transition duration-200`}
           >
-            Send Message ✨
+            {loading ? "Sending..." : "Send Message ✨"}
           </button>
         </form>
       </div>
