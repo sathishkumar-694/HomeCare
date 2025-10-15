@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { API } from "../routes/api";
-
+import barberImg from "../assets/barber.jpg"
 export default function AdminVendors() {
   const [vendors, setVendors] = useState([]);
   const [selectedVendor, setSelectedVendor] = useState(null);
@@ -63,7 +63,7 @@ export default function AdminVendors() {
             className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] cursor-pointer"
           >
             <img
-              src={v.image || "https://via.placeholder.com/300x200?text=No+Image"}
+              src={v.image || barberImg}
               alt={v.name}
               className="w-full h-40 object-cover"
             />
@@ -100,7 +100,7 @@ export default function AdminVendors() {
             <img
               src={
                 selectedVendor.image ||
-                "https://via.placeholder.com/400x250?text=No+Image"
+                barberImg
               }
               alt={selectedVendor.name}
               className="w-full h-48 object-cover rounded-lg mb-4"

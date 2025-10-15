@@ -42,7 +42,7 @@ function AppRoutes() {
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/services" element={<Services />} />
-              <Route path="/domain/:domainName" element={<DomainDetails />} />
+              <Route path="/domain" element={<DomainDetails />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Register />} />
               <Route path="/vendor-register" element={<VendorRegister />} />
