@@ -1,39 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { API } from "../routes/api"; // ✅ 1. Import your API object
-
-// Helper function to get auth details from localStorage
-const getAuthDetails = () => {
-  const token = localStorage.getItem("token");
-  const userString = localStorage.getItem("user");
-
-  if (token && userString) {
-    try {
-      return { token: token, user: JSON.parse(userString) };
-    } catch (e) {
-      console.error("Failed to parse user data from localStorage", e);
-      return { token: null, user: null };
-    }
-  }
-  return { token: null, user: null };
-};
+import { API } from "../routes/api";
+import { AuthContext } from "../context/authContext";
 
 export default function PaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, isAuthenticated } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const service = location.state;
-  const { user } = getAuthDetails(); // Get the logged-in user
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-gray-100">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Please login to book a service</h2>
+          <button onClick={() => navigate("/login")} className="text-blue-600">
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!service) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-100">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Service data not found.</h2>
-          <button onClick={() => navigate("/")} className="text-blue-600">
-            Go back to the homepage
+          <button onClick={() => navigate("/services")} className="text-blue-600">
+            Go back to services
           </button>
         </div>
       </div>
@@ -43,10 +41,19 @@ export default function PaymentPage() {
   const handlePayment = async () => {
     setLoading(true);
     setError(null);
-    const { token } = getAuthDetails();
 
-    if (!token || !user) {
-      setError("You must be logged in to make a booking.");
+    console.log("Payment attempt - User:", user);
+    console.log("Payment attempt - Service:", service);
+    console.log("Payment attempt - User ID:", user?._id);
+
+    if (!user?._id) {
+      setError("User ID is missing. Please login again.");
+      setLoading(false);
+      return;
+    }
+
+    if (!service) {
+      setError("Service data is missing. Please try again.");
       setLoading(false);
       return;
     }
@@ -61,8 +68,10 @@ export default function PaymentPage() {
       amount: service.price,
     };
 
+    console.log("Booking data being sent:", bookingData);
+
     try {
-      // ✅ 2. Use the correct API path from your routes/api.js file
+      const token = localStorage.getItem("token");
       const response = await fetch(API.BOOKING.CREATE(), {
         method: "POST",
         headers: {
@@ -72,11 +81,16 @@ export default function PaymentPage() {
         body: JSON.stringify(bookingData),
       });
 
+      console.log("Response status:", response.status);
+
       if (!response.ok) {
-        // This 'if' block will now correctly catch the error
         const errorData = await response.json();
+        console.log("Error response:", errorData);
         throw new Error(errorData.message || "Failed to create booking.");
       }
+
+      const successData = await response.json();
+      console.log("Success response:", successData);
 
       // If successful, redirect to the success page
       navigate("/payment-success");

@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import InputField from "../Components/InputField.jsx";
 import Button from "../Components/Button.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { API } from "../routes/api.js";
+import { AuthContext } from "../context/authContext.jsx";
 import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
@@ -21,28 +23,17 @@ export default function Login() {
     try {
       const res = await axios.post(API.USER.LOGIN(), form);
 
-      // --- START: MODIFIED SECTION ---
+      // Use the auth context to handle login
+      login(res.data.user, res.data.token);
 
-      // Clear all possible session keys (old and new)
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      localStorage.removeItem("auth"); // Also remove the incorrect key
-
-      // Save new token & user as separate keys
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      // --- END: MODIFIED SECTION ---
-
-      // No alert; redirect instead
+      // Redirect based on role
       if (res.data.user.role === "vendor") {
-        navigate("/vendor-dashboard");
+        navigate("/dashboard");
+      } else if (res.data.user.role === "admin") {
+        navigate("/admin");
       } else {
         navigate("/profile");
       }
-
-      // Trigger navbar update (this is correct)
-      window.dispatchEvent(new Event("storage"));
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || "Login failed");
@@ -52,17 +43,22 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-6">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow">
-        <h2 className="text-3xl font-bold mb-6 text-center">Welcome back</h2>
+    <div className="min-h-[80vh] flex items-center justify-center px-6 bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h2>
+          <p className="text-gray-600">Sign in to your account</p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <InputField
             label="Email"
             name="email"
+            type="email"
             value={form.email}
             onChange={handleChange}
             placeholder="Enter your email"
+            required
           />
 
           <InputField
@@ -72,22 +68,32 @@ export default function Login() {
             value={form.password}
             onChange={handleChange}
             placeholder="Enter your password"
+            required
           />
 
           <Button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
+            disabled={loading}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
 
-        <p className="mt-6 text-sm text-center">
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-blue-600">
-            Register
-          </Link>
-        </p>
+        <div className="mt-8 text-center">
+          <p className="text-sm text-gray-600">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
+              Create Account
+            </Link>
+          </p>
+          <p className="text-sm text-gray-600 mt-2">
+            Are you a vendor?{" "}
+            <Link to="/vendor-register" className="text-blue-600 hover:text-blue-700 font-medium">
+              Register as Vendor
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

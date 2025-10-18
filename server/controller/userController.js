@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Vendor from "../models/Vendor.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -57,14 +58,21 @@ export const loginUser = async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ message: "All fields required" });
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    let account = await User.findOne({ email });
+    let role = "user";
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    if (!account) {
+      account = await Vendor.findOne({ email });
+      if (account) role = "vendor";
+    }
+
+    if (!account) return res.status(400).json({ message: "Invalid credentials" });
+
+    const isMatch = await bcrypt.compare(password, account.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: account._id, role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -73,13 +81,17 @@ export const loginUser = async (req, res) => {
     res.json({
       message: "Login successful",
       token,
+      role,
       user: {
-        _id: user._id, // Use _id
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        phone: user.phone, // Include phone
-        address: user.address, // Include address
+        _id: account._id, // Use _id
+        name: account.name || account.shopName,
+        email: account.email,
+        role,
+        phone: account.phone || "", // Include phone
+        address: account.address || "", // Include address
+        shopName: account.shopName || "",
+        service: account.service || "",
+        location: account.location || ""
       },
     });
   } catch (err) {

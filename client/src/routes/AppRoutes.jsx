@@ -19,7 +19,9 @@ import Support from "../pages/Support";
 import Dashboard from "../pages/Dashboard";
 import PaymentPage from "../pages/paymentPage";
 import BookingSuccess from "../pages/BookingSuccess";
-import RoleSelection from "../pages/RoleSelection"
+import RoleSelection from "../pages/RoleSelection";
+import MyBookings from "../pages/MyBookings";
+
 // Admin Pages
 import AdminLogin from "../pages/AdminLogin";
 import AdminDashboard from "../pages/AdminDashboard";
@@ -30,7 +32,6 @@ import AdminQueries from "../pages/Queries";
 function AppRoutes() {
   return (
     <Routes>
-
       {/* 🌐 Public/User Routes (with NavBar + Footer) */}
       <Route
         path="/*"
@@ -38,7 +39,7 @@ function AppRoutes() {
           <>
             <NavBar />
             <Routes>
-              <Route path="/role-selection" element ={<RoleSelection/>}/>
+              <Route path="/role-selection" element={<RoleSelection/>}/>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
@@ -50,7 +51,9 @@ function AppRoutes() {
               <Route path="/users/:username" element={<Users />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/support" element={<Support />} />
-              <Route path="/payment/:serviceId" element={<PaymentPage />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/my-bookings" element={<MyBookings />} />
+              <Route path="/payment" element={<PaymentPage />} />
               <Route path="/payment-success" element={<BookingSuccess />} />
             </Routes>
             <Footer />
@@ -60,7 +63,8 @@ function AppRoutes() {
 
       {/* 👑 Admin Routes (NO Navbar, NO Footer) */}
       <Route path="/admin-login" element={<AdminLogin />} />
-      <Route path="/admin/*" element={<AdminDashboard />}>
+      <Route path="/admin" element={<AdminDashboard />}>
+        <Route index element={<AdminVendors />} />
         <Route path="vendors" element={<AdminVendors />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="queries" element={<AdminQueries />} />
