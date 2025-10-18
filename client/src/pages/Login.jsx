@@ -21,22 +21,27 @@ export default function Login() {
     try {
       const res = await axios.post(API.USER.LOGIN(), form);
 
-      // Clear any existing session
+      // --- START: MODIFIED SECTION ---
+
+      // Clear all possible session keys (old and new)
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      localStorage.removeItem("auth"); // Also remove the incorrect key
 
-      // Save new token & user
+      // Save new token & user as separate keys
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      // --- END: MODIFIED SECTION ---
 
       // No alert; redirect instead
       if (res.data.user.role === "vendor") {
         navigate("/vendor-dashboard");
       } else {
-        navigate("/user-dashboard");
+        navigate("/profile");
       }
 
-      // Trigger navbar update
+      // Trigger navbar update (this is correct)
       window.dispatchEvent(new Event("storage"));
     } catch (err) {
       console.error(err);

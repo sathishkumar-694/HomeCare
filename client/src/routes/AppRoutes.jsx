@@ -19,7 +19,7 @@ import Support from "../pages/Support";
 import Dashboard from "../pages/Dashboard";
 import PaymentPage from "../pages/paymentPage";
 import BookingSuccess from "../pages/BookingSuccess";
-
+import RoleSelection from "../pages/RoleSelection"
 // Admin Pages
 import AdminLogin from "../pages/AdminLogin";
 import AdminDashboard from "../pages/AdminDashboard";
@@ -38,6 +38,7 @@ function AppRoutes() {
           <>
             <NavBar />
             <Routes>
+              <Route path="/role-selection" element ={<RoleSelection/>}/>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
@@ -49,8 +50,6 @@ function AppRoutes() {
               <Route path="/users/:username" element={<Users />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/support" element={<Support />} />
-              <Route path="/user-dashboard" element={<Dashboard />} />
-              <Route path="/vendor-dashboard" element={<Dashboard />} />
               <Route path="/payment/:serviceId" element={<PaymentPage />} />
               <Route path="/payment-success" element={<BookingSuccess />} />
             </Routes>

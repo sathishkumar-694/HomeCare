@@ -7,35 +7,48 @@ function Navbar() {
   const [dropdown, setDropdown] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-
-    if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
-    } else {
-      setUser(null);
-    }
-
-    // Listen for login/logout updates
+    // This function correctly reads "token" and "user"
     const syncLoginState = () => {
-      const updatedUser = localStorage.getItem("user");
-      const updatedToken = localStorage.getItem("token");
-      if (updatedUser && updatedToken) {
-        setUser(JSON.parse(updatedUser));
+      const storedUser = localStorage.getItem("user");
+      const token = localStorage.getItem("token");
+
+      if (token && storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (e) {
+          // Handle corrupted JSON in localStorage
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          setUser(null);
+        }
       } else {
         setUser(null);
       }
     };
 
+    // Run once on initial load
+    syncLoginState();
+
+    // Listen for login/logout events from other tabs/pages (like Login.jsx)
     window.addEventListener("storage", syncLoginState);
+
+    // Cleanup listener on component unmount
     return () => window.removeEventListener("storage", syncLoginState);
   }, []);
 
   const handleLogout = () => {
+    // --- START: MODIFIED SECTION ---
+    // Clear all keys on logout
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("auth"); // Add this for cleanup
+    // --- END: MODIFIED SECTION ---
+
     setUser(null);
+    setDropdown(false); // Close dropdown on logout
     navigate("/login");
+    
+    // Dispatch event so other open tabs also log out
     window.dispatchEvent(new Event("storage"));
   };
 
@@ -46,6 +59,11 @@ function Navbar() {
     padding: "8px 12px",
   });
 
+  // Your theme logic is fine, but this is a safer way to read it
+  // to avoid errors if the theme isn't set.
+  const theme = localStorage.getItem("theme") || "light";
+  const isDark = theme === "dark";
+
   return (
     <nav
       style={{
@@ -53,11 +71,10 @@ function Navbar() {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "12px 24px",
-        backgroundColor:
-          localStorage.getItem("theme") === "dark" ? "#1a202c" : "#ffffff",
-        color:
-          localStorage.getItem("theme") === "dark" ? "#f8f9fa" : "#1a202c",
+        backgroundColor: isDark ? "#1a202c" : "#ffffff",
+        color: isDark ? "#f8f9fa" : "#1a202c",
         transition: "all 0.3s ease",
+        borderBottom: isDark ? "1px solid #2d3748" : "1px solid #e2e8f0",
       }}
     >
       <h1
@@ -114,15 +131,13 @@ function Navbar() {
                   position: "absolute",
                   top: "44px",
                   right: "0",
-                  backgroundColor:
-                    localStorage.getItem("theme") === "dark"
-                      ? "#2d3748"
-                      : "#fff",
-                  border: "1px solid #ccc",
+                  backgroundColor: isDark ? "#2d3748" : "#fff",
+                  border: isDark ? "1px solid #4a5568" : "1px solid #e2e8f0",
                   borderRadius: "8px",
                   boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                   width: "150px",
                   zIndex: 100,
+                  color: isDark ? "#f8f9fa" : "#1a202c",
                 }}
               >
                 <button
@@ -137,6 +152,7 @@ function Navbar() {
                     border: "none",
                     background: "transparent",
                     cursor: "pointer",
+                    color: "inherit",
                   }}
                 >
                   View Profile

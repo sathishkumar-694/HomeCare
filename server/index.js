@@ -1,22 +1,37 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-require("dotenv").config();
+// FILE: server.js (Simplified Version)
 
-const vendorRoutes = require("./routes/vendorRoutes");
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import connectDB from "./config/db.js";
+
+// Import routes
+import vendorRoutes from "./routes/vendor.js";
+import userRoutes from "./routes/User.js";
+import adminRoutes from "./routes/admin.js";
+import supportRoutes from "./routes/support.js";
+import bookingRoutes from "./routes/booking.js"; 
+
+import contactRoutes from "./routes/Contact.js";
+
+
+
+dotenv.config();
+connectDB();
 
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); // This can now be at the top
 
-// vendor API
-app.use("/api/vendors", vendorRoutes);
+// Routes
+app.use("/api/vendor", vendorRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/support", supportRoutes);
+app.use("/api/bookings", bookingRoutes); // Use the simplified booking routes
+app.use("/api/contact", contactRoutes);
+app.get("/", (req, res) => res.send("API is running"));
 
 const PORT = process.env.PORT || 5000;
-
-mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/homecare")
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("❌ DB connection error:", err));
-
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

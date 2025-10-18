@@ -1,146 +1,111 @@
-
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import VendorRegister from "./vendorRegister";
+
+// Import your images
 import plumberImg from "../assets/plumber.jpg";
-import cleanerImg from "../assets/barber.jpg";
+import cleanerImg from "../assets/plumber.jpg";
 import barberImg from "../assets/barber.jpg";
 
-export default function Services() {
-  const [role, setRole] = useState("client");
-  const [showForm, setShowForm] = useState(false);
-  const navigate = useNavigate();
-// src/data.js
-
-// Import your images here
-// List of available services
-
-// List of available providers, linked by the 'service' key
-const services = [
+// --- Service Provider Data ---
+// 
+// IMPORTANT: I've added _id, price, date, and time
+// to match what your PaymentPage component expects.
+//
+const providers = [
   {
+    _id: "shop101", // Use _id as expected by PaymentPage
     id: 101,
     name: "Ramesh Kumar",
-    service: "Plumbing", // This matches a service name
+    service: "Plumbing",
     desc: "Expert in fixing water leaks and pipe installations.",
     photo: plumberImg,
+    price: 500,       // Required by PaymentPage
+    date: "2025-10-20", // Required by PaymentPage (example date)
+    time: "10:00 AM",   // Required by PaymentPage (example time)
   },
   {
+    _id: "shop102",
     id: 102,
     name: "Suresh Singh",
     service: "Plumbing",
     desc: "24/7 emergency plumbing services available.",
-    photo: plumberImg, // You can use different photos
+    photo: plumberImg,
+    price: 650,
+    date: "2025-10-21",
+    time: "2:00 PM",
   },
   {
+    _id: "shop103",
     id: 103,
     name: "Anita Sharma",
     service: "Home Cleaning",
     desc: "Professional home and office cleaning services.",
     photo: cleanerImg,
+    price: 1500,
+    date: "2025-10-22",
+    time: "9:00 AM",
   },
   {
+    _id: "shop104",
     id: 104,
     name: "Vikram Mehta",
     service: "Salon at Home",
     desc: "Professional men's and women's hairstylist.",
     photo: barberImg,
+    price: 800,
+    date: "2025-10-20",
+    time: "4:00 PM",
   },
 ];
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (role === "client") {
-      // When client is selected → show service selection
-      setShowForm(true);
-    } else {
-      // When provider is selected → go to vendor form
-      navigate("/vendor-register");
-    }
-  };
 
-  // if provider, render VendorRegister directly
-  if (role === "provider") {
-    return <VendorRegister />;
-  }
+export default function ServicesList() {
+  const navigate = useNavigate();
 
-  // if client and showForm is true → show services list
-  if (role === "client" && showForm) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center py-8">
-        <h2 className="text-3xl font-bold mb-6 text-center">Available Services</h2>
-        <div className="grid md:grid-cols-3 gap-6 w-full max-w-6xl px-6">
-          {services.map((service) => (
-            <div
-              key={service.id}
-              className="border p-6 rounded-lg shadow-md bg-white hover:shadow-lg transition"
-            >
-              <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
-              <p className="text-gray-600 mb-2">{service.description}</p>
-              <p className="text-lg font-bold text-blue-600 mb-4">₹{service.price}</p>
+  return (
+    <div className="container mx-auto p-8 bg-gray-50 min-h-screen">
+      <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
+        Available Service Providers
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {providers.map((provider) => (
+          <div
+            key={provider.id}
+            className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col"
+          >
+            <img
+              src={provider.photo}
+              alt={provider.name}
+              className="w-full h-48 object-cover"
+            />
+            <div className="p-5 flex flex-col flex-grow">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                {provider.name}
+              </h3>
+              <p className="text-sm font-medium text-blue-600 mb-3">
+                {provider.service}
+              </p>
+              <p className="text-gray-700 mb-2 flex-grow">{provider.desc}</p>
+              
+              {/* Display the price from the data */}
+              <p className="text-xl font-bold text-gray-800 mb-4">
+                ₹{provider.price}
+              </p>
+              
               <button
-                onClick={() => navigate(`/payment/${service.id}`, { state: service })}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                // THIS IS THE KEY:
+                // We navigate to the payment page AND pass the
+                // entire 'provider' object as the route's 'state'.
+                // Your PaymentPage will receive this in location.state.
+                onClick={() =>
+                  navigate(`/payment/${provider.id}`, { state: provider })
+                }
+                className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300"
               >
                 Book Now
               </button>
             </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // Initial role selection view
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-2">Choose Your Role</h2>
-        <p className="text-gray-600 text-center mb-6">
-          Select the role that best describes you to continue.
-        </p>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-         
-          <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition">
-            <input
-              type="radio"
-              name="role"
-              value="client"
-              checked={role === "client"}
-              onChange={(e) => setRole(e.target.value)}
-              className="mr-3"
-            />
-            <div>
-              <p className="font-semibold">Client</p>
-              <p className="text-sm text-gray-500">
-                Hire professionals for your projects.
-              </p>
-            </div>
-          </label>
-
-          <label className="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition">
-            <input
-              type="radio"
-              name="role"
-              value="provider"
-              checked={role === "provider"}
-              onChange={(e) => setRole(e.target.value)}
-              className="mr-3"
-            />
-            <div>
-              <p className="font-semibold">Service Provider</p>
-              <p className="text-sm text-gray-500">
-                Offer your services and connect with clients.
-              </p>
-            </div>
-          </label>
-
-          <button
-            type="submit"
-            className="mt-4 w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
-          >
-            Continue
-          </button>
-        </form>
+          </div>
+        ))}
       </div>
     </div>
   );
