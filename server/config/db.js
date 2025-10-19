@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/homecare");
+    await mongoose.connect("mongodb://localhost:27017/homcare");
     console.log("✅ MongoDB Connected");
   } catch (err) {
     console.error("❌ MongoDB Connection failed:", err.message);

@@ -42,7 +42,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
-
+import mongoose from "mongoose";
 // Import routes
 import vendorRoutes from "./routes/vendor.js";
 import userRoutes from "./routes/User.js";
@@ -51,7 +51,6 @@ import supportRoutes from "./routes/support.js";
 import bookingRoutes from "./routes/booking.js"; 
 
 import contactRoutes from "./routes/Contact.js";
-
 const app = express();
 app.use(cors());
 app.use(express.json()); // This can now be at the top

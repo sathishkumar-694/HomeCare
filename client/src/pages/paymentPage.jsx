@@ -44,9 +44,9 @@ export default function PaymentPage() {
 
     console.log("Payment attempt - User:", user);
     console.log("Payment attempt - Service:", service);
-    console.log("Payment attempt - User ID:", user?._id);
+    console.log("Payment attempt - User ID:", user?.id); // ✅ UPDATED
 
-    if (!user?._id) {
+    if (!user?.id) { // ✅ UPDATED
       setError("User ID is missing. Please login again.");
       setLoading(false);
       return;
@@ -60,7 +60,7 @@ export default function PaymentPage() {
 
     // Prepare the data for the backend
     const bookingData = {
-      user: user._id, // ✅ Pass the logged-in user's ID
+      user: user.id, // ✅ UPDATED
       shop: service._id,
       service: service.service,
       date: service.date,
