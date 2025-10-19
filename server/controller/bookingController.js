@@ -1,15 +1,10 @@
 import Booking from "../models/booking.js";
 
-// ============================================
-// 🛍️ CREATE NEW BOOKING (From PaymentPage)
-// ============================================
 export const createBooking = async (req, res) => {
   try {
     console.log("Booking request body:", req.body); // Debug log
     
     const { user, shop, service, date, time, amount } = req.body;
-
-    // Validate required fields
     if (!user || !shop || !service || !date || !time || !amount) {
       console.log("Missing fields:", { user, shop, service, date, time, amount });
       return res.status(400).json({ 
@@ -34,10 +29,7 @@ export const createBooking = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
-// ============================================
-// 🧾 GET ALL BOOKINGS FOR A USER (For Profile.jsx)
-// ============================================
+//all bookings
 export const getUserBookings = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -51,10 +43,7 @@ export const getUserBookings = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
-// ============================================
-// 🧾 GET ALL BOOKINGS FOR A VENDOR (For Vendor Dashboard)
-// ============================================
+//Vendor Dashboard
 export const getVendorBookings = async (req, res) => {
   try {
     const { vendorId } = req.params;

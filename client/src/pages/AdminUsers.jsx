@@ -26,7 +26,7 @@ export default function AdminUsers() {
   const removeUser = async (id) => {
     if (!window.confirm("Are you sure you want to remove this user?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/admin/users/${id}/remove`);
+      await axios.delete(`http://localhost:5000/api/users/${id}/remove`);
       setUsers((prev) => prev.filter((u) => u._id !== id));
       setSelectedUser(null);
     } catch (err) {
@@ -43,7 +43,6 @@ export default function AdminUsers() {
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">Active Users</h1>
 
-      {/* Card Grid */}
       <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {users.map((u) => (
           <div
@@ -69,7 +68,6 @@ export default function AdminUsers() {
         ))}
       </div>
 
-      {/* Detail Popup */}
       {selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative max-h-[90vh] overflow-y-auto">
@@ -103,7 +101,6 @@ export default function AdminUsers() {
               {new Date(selectedUser.createdAt).toLocaleDateString()}
             </p>
 
-            {/* Booking History Section */}
             <div className="mt-4">
               <h3 className="text-lg font-semibold mb-2">Booking History</h3>
               {bookings.length === 0 ? (
@@ -143,7 +140,6 @@ export default function AdminUsers() {
               )}
             </div>
 
-            {/* Remove Button */}
             <div className="flex justify-end mt-5">
               <button
                 onClick={() => removeUser(selectedUser._id)}

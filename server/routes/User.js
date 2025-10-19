@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
 // ============================================
 // 📝 REGISTER USER
 // ============================================
-router.post("/register", upload.single('profileImage'), async (req, res) => {
+router.post("/register", upload.single("profileImage"), async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -36,7 +36,8 @@ router.post("/register", upload.single('profileImage'), async (req, res) => {
     }
 
     const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ message: "User already exists" });
+    if (existing)
+      return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -66,20 +67,31 @@ router.post("/register", upload.single('profileImage'), async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ message: "All fields required" });
+    if (!email || !password)
+      return res.status(400).json({ message: "All fields required" });
 
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     res.json({
       message: "Login successful",
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (err) {
     console.error("Login Error:", err);
@@ -106,7 +118,9 @@ router.get("/:id", async (req, res) => {
 // ============================================
 router.put("/:id", async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     res.json(user);
   } catch (err) {
     console.error("Update Profile Error:", err);
@@ -117,7 +131,8 @@ router.put("/:id", async (req, res) => {
 // ============================================
 // 🗑️ DELETE USER (For Admin)
 // ============================================
-router.delete("/:id", async (req, res) => {
+router.delete("/:id/remove", async (req, res) => {
+  // -------------------
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });

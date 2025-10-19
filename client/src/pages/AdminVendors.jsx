@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { API } from "../routes/api";
-import barberImg from "../assets/barber.jpg"
+import barberImg from "../assets/barber.jpg";
+
 export default function AdminVendors() {
   const [vendors, setVendors] = useState([]);
   const [selectedVendor, setSelectedVendor] = useState(null);
@@ -47,14 +48,13 @@ export default function AdminVendors() {
         setVendors((prev) => prev.filter((v) => v._id !== id));
         setSelectedVendor(null);
       })
-      .catch((err) => console.error("Error removing vendor:", err));
+      .catch((err) => console.error("Error:", err));
   };
 
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">Manage Vendors</h1>
 
-      {/* Grid View */}
       <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {vendors.map((v) => (
           <div
@@ -68,7 +68,9 @@ export default function AdminVendors() {
               className="w-full h-40 object-cover"
             />
             <div className="p-3">
-              <h2 className="text-lg font-semibold text-gray-800 truncate">{v.name}</h2>
+              <h2 className="text-lg font-semibold text-gray-800 truncate">
+                {v.name}
+              </h2>
               <p className="text-gray-600 text-sm truncate">{v.service}</p>
               <span
                 className={`inline-block mt-2 px-3 py-0.5 text-xs font-semibold rounded-full ${
@@ -86,7 +88,6 @@ export default function AdminVendors() {
         ))}
       </div>
 
-      {/* Detail Popup */}
       {selectedVendor && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative">
@@ -98,10 +99,7 @@ export default function AdminVendors() {
             </button>
 
             <img
-              src={
-                selectedVendor.image ||
-                barberImg
-              }
+              src={selectedVendor.image || barberImg}
               alt={selectedVendor.name}
               className="w-full h-48 object-cover rounded-lg mb-4"
             />

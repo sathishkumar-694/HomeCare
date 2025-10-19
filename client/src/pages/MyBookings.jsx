@@ -9,7 +9,8 @@ const MyBookings = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user && isAuthenticated && user._id) {
+    // ✅ FIX 1: Changed user._id to user.id
+    if (user && isAuthenticated && user.id) {
       console.log("MyBookings - User data available:", user);
       fetchUserBookings();
     } else {
@@ -19,7 +20,8 @@ const MyBookings = () => {
   }, [user, isAuthenticated]);
 
   const fetchUserBookings = async () => {
-    if (!user?._id) {
+    // ✅ FIX 2: Changed user?._id to user?.id
+    if (!user?.id) {
       console.log("No user ID available for fetching bookings");
       setLoading(false);
       return;
@@ -27,10 +29,13 @@ const MyBookings = () => {
 
     try {
       const token = localStorage.getItem("token");
-      console.log("Fetching bookings for user:", user._id);
-      const res = await axios.get(API.BOOKING.USER_BOOKINGS(user._id), {
+      console.log("Fetching bookings for user:", user.id); // Changed for logging
+      
+      // ✅ FIX 3: Changed user._id to user.id
+      const res = await axios.get(API.BOOKING.USER_BOOKINGS(user.id), {
         headers: { Authorization: `Bearer ${token}` }
       });
+      
       console.log("Bookings fetched successfully:", res.data);
       setBookings(res.data);
     } catch (err) {
@@ -116,12 +121,15 @@ const MyBookings = () => {
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-xl font-bold text-gray-800 mb-2">
-                      {booking.service}
+                      {/* This is correct, it reads the service name string */}
+                      {booking.service} 
                     </h3>
                     <p className="text-gray-600 mb-1">
+                      {/* This is correct, it reads the populated vendor name */}
                       Provider: {booking.shop?.name || "Service Provider"}
                     </p>
                     <p className="text-gray-600 mb-1">
+                      {/* This is correct, it reads the populated vendor address */}
                       Location: {booking.shop?.address || "N/A"}
                     </p>
                     <p className="text-gray-600">

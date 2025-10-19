@@ -22,8 +22,8 @@ export const API = {
   VENDOR: {
     REGISTER: () => `${BASE_URL}/vendor/register`,
     GET_ALL: () => `${BASE_URL}/vendor`,
-    APPROVE: (id) => `${BASE_URL}/admin/vendors/${id}/approve`,
-    REJECT: (id) => `${BASE_URL}/admin/vendors/${id}/reject`,
+    APPROVE: (id) => `${BASE_URL}/vendors/${id}/approve`,
+    REJECT: (id) => `${BASE_URL}/vendors/${id}/reject`,
   },
 
   // 👑 Admin endpoints

@@ -24,6 +24,7 @@ export const API = {
     GET_ALL: () => `${BASE_URL}/vendor`,
     APPROVE: (id) => `${BASE_URL}/admin/vendors/${id}/approve`,
     REJECT: (id) => `${BASE_URL}/admin/vendors/${id}/reject`,
+    REMOVE: (id) => `${BASE_URL}/admin/vendors/${id}/re`,
   },
 
   // 👑 Admin endpoints
