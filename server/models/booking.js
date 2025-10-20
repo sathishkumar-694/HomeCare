@@ -36,6 +36,10 @@ const bookingSchema = new mongoose.Schema(
       enum: ["pending", "confirmed", "completed", "cancelled"],
       default: "pending",
     },
+    vendorId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Vendor" 
+}
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt

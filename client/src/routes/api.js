@@ -31,7 +31,7 @@ export const API = {
   ADMIN: {
     LOGIN: () => `${BASE_URL}/admin/login`,
     STATS: () => `${BASE_URL}/admin/stats`,
-
+    BOOKINGS: () => `${BASE_URL}/admin/bookings`, // <-- ADD THIS LINE
   },
 
   // ✉️ Contact & Query endpoints

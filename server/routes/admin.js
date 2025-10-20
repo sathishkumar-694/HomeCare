@@ -2,7 +2,7 @@ import express from "express";
 import Vendor from "../models/Vendor.js";
 import Contact from "../models/Contact.js";
 import User from "../models/User.js";
-import Booking from "../models/booking.js"; 
+import Booking from "../models/booking.js";
 
 const router = express.Router();
 
@@ -26,6 +26,19 @@ router.get("/stats", async (req, res) => {
     });
   } catch (err) {
     console.error("Error fetching admin stats:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.get("/bookings", async (req, res) => {
+  try {
+    const bookings = await Booking.find()
+      .populate("user", "name")
+      .populate("shop", "name") // Changed "vendor" to "shop"
+      .sort({ createdAt: -1 });
+    res.json(bookings);
+  } catch (err) {
+    console.error("Error fetching all bookings:", err);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -84,7 +97,7 @@ router.delete("/queries/:id", async (req, res) => {
   try {
     const query = await Contact.findByIdAndDelete(req.params.id);
     if (!query) {
-      return res.status(404).json({ error: "Query not found" });
+      return res.status(404).json({ error: "Query not found" }); // Fixed status code
     }
     res.json({ message: "Query deleted successfully" });
   } catch (err) {

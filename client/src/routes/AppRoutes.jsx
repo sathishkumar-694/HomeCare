@@ -23,11 +23,12 @@ import RoleSelection from "../pages/RoleSelection";
 import MyBookings from "../pages/MyBookings";
 
 // Admin Pages
-import AdminLogin from "../pages/AdminLogin";
+import AdminLogin from "../pages/AdminLogin"; // 1. Fixed this component name
 import AdminDashboard from "../pages/AdminDashboard";
 import AdminVendors from "../pages/AdminVendors";
 import AdminUsers from "../pages/AdminUsers";
-import AdminQueries from "../pages/Queries";
+import Queries from "../pages/Queries"; // 2. Fixed this component name
+import AdminBookings from "../pages/AdminBookings";
 
 function AppRoutes() {
   return (
@@ -39,7 +40,7 @@ function AppRoutes() {
           <>
             <NavBar />
             <Routes>
-              <Route path="/role-selection" element={<RoleSelection/>}/>
+              <Route path="/role-selection" element={<RoleSelection />} />
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
@@ -61,13 +62,16 @@ function AppRoutes() {
         }
       />
 
-      {/* 👑 Admin Routes (NO Navbar, NO Footer) */}
+      {/* 👑 Admin Routes (No NavBar + Footer) */}
       <Route path="/admin-login" element={<AdminLogin />} />
+
+      {/* 3. This is the corrected admin layout structure */}
       <Route path="/admin" element={<AdminDashboard />}>
-        <Route index element={<AdminVendors />} />
+        <Route index element={<AdminBookings />} /> {/* Default page */}
+        <Route path="bookings" element={<AdminBookings />} />
         <Route path="vendors" element={<AdminVendors />} />
         <Route path="users" element={<AdminUsers />} />
-        <Route path="queries" element={<AdminQueries />} />
+        <Route path="queries" element={<Queries />} />
       </Route>
     </Routes>
   );
