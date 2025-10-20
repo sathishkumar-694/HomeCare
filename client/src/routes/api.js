@@ -30,6 +30,8 @@ export const API = {
   // 👑 Admin endpoints
   ADMIN: {
     LOGIN: () => `${BASE_URL}/admin/login`,
+    STATS: () => `${BASE_URL}/admin/stats`,
+
   },
 
   // ✉️ Contact & Query endpoints

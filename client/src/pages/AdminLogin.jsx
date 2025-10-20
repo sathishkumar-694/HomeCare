@@ -11,7 +11,7 @@ export default function AdminLogin() {
     e.preventDefault();
     if (username === "admin" && password === "admin123") {
       localStorage.setItem("isAdmin", "true");
-      navigate("/admin/dashboard/vendors");
+      navigate("/admin/vendors");
     } else {
       setError("Invalid username or password");
     }

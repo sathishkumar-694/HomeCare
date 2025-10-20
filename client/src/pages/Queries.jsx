@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { API } from "../routes/api";
+import ConfirmModal from "../Components/ConfirmModal"; // 1. Import the modal
 
 export default function Queries() {
   const [queries, setQueries] = useState([]);
   const [selectedQuery, setSelectedQuery] = useState(null);
+
+  // --- State for the modal ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  // ---------------------------
 
   useEffect(() => {
     axios
@@ -13,14 +19,27 @@ export default function Queries() {
       .catch((err) => console.error("Error fetching queries:", err));
   }, []);
 
-  const removeQuery = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this query?")) return;
+  // --- New Modal Functions ---
+
+  // Opens the modal and sets the query to delete
+  const openDeleteModal = (query) => {
+    setItemToDelete(query);
+    setIsModalOpen(true);
+  };
+
+  // Runs when "Confirm" is clicked
+  const handleConfirmDelete = async () => {
+    if (!itemToDelete) return;
     try {
-      await axios.delete(`http://localhost:5000/api/admin/queries/${id}`);
-      setQueries((prev) => prev.filter((q) => q._id !== id));
+      // Using the hardcoded URL from your original file
+      await axios.delete(`http://localhost:5000/api/admin/queries/${itemToDelete._id}`);
+      setQueries((prev) => prev.filter((q) => q._id !== itemToDelete._id));
       setSelectedQuery(null);
     } catch (err) {
       console.error("Error deleting query:", err);
+    } finally {
+      setIsModalOpen(false);
+      setItemToDelete(null);
     }
   };
 
@@ -67,26 +86,25 @@ export default function Queries() {
               ✕
             </button>
 
-            <div className="mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">
-                {selectedQuery.name}
-              </h2>
-              <p className="text-gray-600">{selectedQuery.email}</p>
-              <p className="text-sm text-gray-500 mt-1">
-                {new Date(selectedQuery.createdAt).toLocaleString()}
-              </p>
-            </div>
-
-            <div className="bg-gray-50 p-3 rounded-lg mb-5">
-              <h3 className="text-lg font-semibold mb-2">Message</h3>
-              <p className="text-gray-700 whitespace-pre-wrap">
-                {selectedQuery.message}
-              </p>
-            </div>
+            {/* ... other query details ... */}
+             <div className="mb-4">
+               <h2 className="text-2xl font-bold text-gray-800">
+                 {selectedQuery.name}
+               </h2>
+               <p className="text-gray-600">{selectedQuery.email}</p>
+               <p className="text-sm text-gray-500 mt-1">
+                 {new Date(selectedQuery.createdAt).toLocaleString()}
+               </p>
+             </div>
+             <div className="bg-gray-50 p-3 rounded-lg mb-5">
+               <h3 className="text-lg font-semibold mb-2">Message</h3>
+               <p className="text-gray-700 whitespace-pre-wrap"></p>
+                 {selectedQuery.message}
+             </div>
 
             <div className="flex justify-end">
               <button
-                onClick={() => removeQuery(selectedQuery._id)}
+                onClick={() => openDeleteModal(selectedQuery)}
                 className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
               >
                 Delete Query
@@ -95,6 +113,16 @@ export default function Queries() {
           </div>
         </div>
       )}
+
+      {/* Reusable Modal Render */}
+      <ConfirmModal
+        isOpen={isModalOpen}
+        title={`Delete Query from ${itemToDelete?.name}?`}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+      >
+        Are you sure you want to delete the query from <strong>{itemToDelete?.name}</strong>?
+      </ConfirmModal>
     </div>
   );
 }

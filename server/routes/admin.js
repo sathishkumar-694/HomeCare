@@ -1,7 +1,34 @@
 import express from "express";
 import Vendor from "../models/Vendor.js";
+import Contact from "../models/Contact.js";
+import User from "../models/User.js";
+import Booking from "../models/booking.js"; 
 
 const router = express.Router();
+
+router.get("/stats", async (req, res) => {
+  try {
+    const [userCount, vendorCount, pendingVendorCount, bookingCount, queryCount] =
+      await Promise.all([
+        User.countDocuments(),
+        Vendor.countDocuments(),
+        Vendor.countDocuments({ status: "pending" }),
+        Booking.countDocuments(),
+        Contact.countDocuments(),
+      ]);
+
+    res.json({
+      userCount,
+      vendorCount,
+      pendingVendorCount,
+      bookingCount,
+      queryCount,
+    });
+  } catch (err) {
+    console.error("Error fetching admin stats:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 router.get("/vendors", async (req, res) => {
   try {
@@ -49,6 +76,19 @@ router.delete("/vendors/:id/remove", async (req, res) => {
     res.json({ message: "Vendor removed" });
   } catch (err) {
     console.error("Vendor removal failed:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.delete("/queries/:id", async (req, res) => {
+  try {
+    const query = await Contact.findByIdAndDelete(req.params.id);
+    if (!query) {
+      return res.status(404).json({ error: "Query not found" });
+    }
+    res.json({ message: "Query deleted successfully" });
+  } catch (err) {
+    console.error("Query deletion failed:", err);
     res.status(500).json({ error: "Server error" });
   }
 });

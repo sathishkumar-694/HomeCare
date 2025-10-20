@@ -9,7 +9,8 @@ export default function AdminDashboard() {
     totalUsers: 0,
     totalVendors: 0,
     pendingVendors: 0,
-    totalBookings: 0
+    totalBookings: 0,
+    queryCount: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -19,20 +20,13 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const [usersRes, vendorsRes] = await Promise.all([
-        axios.get(API.USER.GET_ALL()),
-        axios.get(API.VENDOR.GET_ALL())
-      ]);
-
-      const totalUsers = usersRes.data.length;
-      const totalVendors = vendorsRes.data.length;
-      const pendingVendors = vendorsRes.data.filter(v => v.status === "pending").length;
-
+      const res = await axios.get(API.ADMIN.STATS());
       setStats({
-        totalUsers,
-        totalVendors,
-        pendingVendors,
-        totalBookings: 0 // You can add booking stats later
+        totalUsers: res.data.userCount,
+        totalVendors: res.data.vendorCount,
+        pendingVendors: res.data.pendingVendorCount,
+        totalBookings: res.data.bookingCount,
+        queryCount: res.data.queryCount,
       });
     } catch (err) {
       console.error("Error fetching stats:", err);
@@ -50,16 +44,15 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
       <aside className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col shadow-xl">
         <div className="p-6 border-b border-gray-700">
           <h2 className="text-2xl font-bold text-center">Admin Panel</h2>
           <p className="text-gray-400 text-sm text-center mt-1">HomeCare Management</p>
         </div>
-        
+
         <nav className="flex-1 p-4 space-y-2">
-          <Link 
-            to="/admin/vendors" 
+          <Link
+            to="/admin/vendors"
             className="flex items-center space-x-3 hover:bg-gray-700 p-3 rounded-lg transition-colors group"
           >
             <svg className="w-5 h-5 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,9 +65,9 @@ export default function AdminDashboard() {
               </span>
             )}
           </Link>
-          
-          <Link 
-            to="/admin/users" 
+
+          <Link
+            to="/admin/users"
             className="flex items-center space-x-3 hover:bg-gray-700 p-3 rounded-lg transition-colors group"
           >
             <svg className="w-5 h-5 group-hover:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,21 +75,26 @@ export default function AdminDashboard() {
             </svg>
             <span>Users</span>
           </Link>
-          
-          <Link 
-            to="/admin/queries" 
+
+          <Link
+            to="/admin/queries"
             className="flex items-center space-x-3 hover:bg-gray-700 p-3 rounded-lg transition-colors group"
           >
             <svg className="w-5 h-5 group-hover:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
             <span>Queries</span>
+            {stats.queryCount > 0 && (
+              <span className="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">
+                {stats.queryCount}
+              </span>
+            )}
           </Link>
         </nav>
 
         <div className="p-4 border-t border-gray-700">
-          <button 
-            onClick={handleLogout} 
+          <button
+            onClick={handleLogout}
             className="w-full bg-red-600 hover:bg-red-700 py-3 rounded-lg transition-colors font-medium flex items-center justify-center space-x-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,14 +105,12 @@ export default function AdminDashboard() {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Admin Dashboard</h1>
           <p className="text-gray-600">Manage your HomeCare platform</p>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center">
@@ -173,7 +169,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Content Area */}
         <div className="bg-white rounded-xl shadow-lg">
           <Outlet />
         </div>
