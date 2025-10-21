@@ -33,7 +33,6 @@ router.post("/register", upload.single("photo"), async (req, res) => {
   }
 });
 
-// GET all vendors (Admin)
 router.get("/", async (req, res) => {
   try {
     const vendors = await Vendor.find().sort({ createdAt: -1 });
@@ -43,13 +42,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
-// ============================================
-// 		NEW ROUTES ADDED BELOW
-// ============================================
-
-// PATCH: Approve vendor
-// This matches: PATCH /api/admin/vendors/:id/approve
 router.patch("/:id/approve", async (req, res) => {
   try {
     const vendor = await Vendor.findByIdAndUpdate(

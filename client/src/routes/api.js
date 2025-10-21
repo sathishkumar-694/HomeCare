@@ -5,6 +5,7 @@ export const API = {
   // 👥 User endpoints
   USER: {
     LOGIN: () => `${BASE_URL}/users/login`,
+    GOOGLE_LOGIN: () => `${BASE_URL}/users/google-login`,
     REGISTER: () => `${BASE_URL}/users/register`,
     PROFILE: (id) => `${BASE_URL}/users/${id}`, // For PUT (update) and GET (get profile)
     GET_ALL: () => `${BASE_URL}/users`,
@@ -16,15 +17,19 @@ export const API = {
     CREATE: () => `${BASE_URL}/bookings/create`,
     USER_BOOKINGS: (userId) => `${BASE_URL}/bookings/user/${userId}`,
     VENDOR_BOOKINGS: (vendorId) => `${BASE_URL}/bookings/vendor/${vendorId}`,
+    GET_BY_ID: (id) => `${BASE_URL}/bookings/${id}`,
+    UPDATE_STATUS: (id) => `${BASE_URL}/bookings/${id}/status`,
   },
 
   // 🧑‍🔧 Vendor endpoints
   VENDOR: {
     REGISTER: () => `${BASE_URL}/vendor/register`,
+    LOGIN: () => `${BASE_URL}/vendor/login`,
+    GOOGLE_LOGIN: () => `${BASE_URL}/vendor/google-login`,
     GET_ALL: () => `${BASE_URL}/vendor`,
     APPROVE: (id) => `${BASE_URL}/admin/vendors/${id}/approve`,
     REJECT: (id) => `${BASE_URL}/admin/vendors/${id}/reject`,
-    REMOVE: (id) => `${BASE_URL}/admin/vendors/${id}/re`,
+    REMOVE: (id) => `${BASE_URL}/admin/vendors/${id}/remove`,
   },
 
   // 👑 Admin endpoints
@@ -42,5 +47,17 @@ export const API = {
   QUERY: {
     GET_ALL: () => `${BASE_URL}/queries`,
     DELETE: (id) => `${BASE_URL}/queries/${id}`,
+  },
+
+  // 📝 Feedback endpoints
+  FEEDBACK: {
+    CREATE: () => `${BASE_URL}/feedback`,
+    GET_BY_BOOKING: (bookingId) => `${BASE_URL}/feedback/booking/${bookingId}`,
+    GET_BY_VENDOR: (vendorId) => `${BASE_URL}/feedback/vendor/${vendorId}`,
+  },
+
+  // 📧 Email endpoints
+  EMAIL: {
+    SEND_NOTIFICATION: () => `${BASE_URL}/email/send-notification`,
   },
 };

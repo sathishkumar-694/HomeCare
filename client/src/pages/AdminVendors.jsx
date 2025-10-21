@@ -7,6 +7,8 @@ import ConfirmModal from "../Components/ConfirmModal"; // 1. Import the modal
 export default function AdminVendors() {
   const [vendors, setVendors] = useState([]);
   const [selectedVendor, setSelectedVendor] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
 
   // --- State for the modal ---
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -91,13 +93,59 @@ export default function AdminVendors() {
     return { title: "Confirm Action", message: "Are you sure?" };
   };
 
+  // Filter vendors based on search term and status
+  const filteredVendors = vendors.filter(vendor => {
+    const matchesSearch = searchTerm === "" || 
+      vendor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vendor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vendor.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vendor.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vendor.shopName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === "all" || vendor.status === filterStatus;
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">Manage Vendors</h1>
 
+      {/* Search and Filter Controls */}
+      <div className="mb-8 space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search Bar */}
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Search vendors by name, email, service, or location..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          
+          {/* Status Filter */}
+          <div className="md:w-48">
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+            </select>
+          </div>
+        </div>
+        
+        {/* Results Count */}
+        <div className="text-sm text-gray-600">
+          Showing {filteredVendors.length} of {vendors.length} vendors
+        </div>
+      </div>
+
       {/* Grid View */}
       <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {vendors.map((v) => (
+        {filteredVendors.map((v) => (
           <div
             key={v._id}
             onClick={() => setSelectedVendor(v)}

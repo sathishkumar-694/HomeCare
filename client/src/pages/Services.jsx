@@ -15,6 +15,7 @@ export default function ServicesList() {
   const [vendors, setVendors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchVendors();
@@ -33,17 +34,29 @@ export default function ServicesList() {
     }
   };
 
-  const getServiceImage = (service) => {
-    const serviceLower = service.toLowerCase();
+  const getServiceImage = (vendor) => {
+    // Use vendor's uploaded photo if available
+    if (vendor.photo) {
+      return `http://localhost:5000/uploads/${vendor.photo}`;
+    }
+    
+    // Fallback to default images based on service type
+    const serviceLower = vendor.service.toLowerCase();
     if (serviceLower.includes("plumb")) return plumberImg;
     if (serviceLower.includes("clean")) return cleanerImg;
     if (serviceLower.includes("salon") || serviceLower.includes("hair")) return barberImg;
     return plumberImg; // default
   };
 
-  const filteredVendors = filter === "all" 
-    ? vendors 
-    : vendors.filter(vendor => vendor.service.toLowerCase().includes(filter.toLowerCase()));
+  const filteredVendors = vendors.filter(vendor => {
+    const matchesFilter = filter === "all" || vendor.service.toLowerCase().includes(filter.toLowerCase());
+    const matchesSearch = searchTerm === "" || 
+      vendor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vendor.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vendor.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vendor.shopName.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
 
   const handleBookNow = (vendor) => {
     if (!isAuthenticated) {
@@ -89,6 +102,34 @@ export default function ServicesList() {
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Choose from our verified and approved service providers for all your home service needs
           </p>
+        </div>
+
+        {/* Search Bar */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search services, vendors, or locations..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-6 py-4 pl-12 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-lg"
+            />
+            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Filter Buttons */}
@@ -151,9 +192,17 @@ export default function ServicesList() {
               >
                 <div className="relative">
                   <img
-                    src={getServiceImage(vendor.service)}
+                    src={getServiceImage(vendor)}
                     alt={vendor.name}
                     className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      // Fallback to default image if vendor photo fails to load
+                      const serviceLower = vendor.service.toLowerCase();
+                      if (serviceLower.includes("plumb")) e.target.src = plumberImg;
+                      else if (serviceLower.includes("clean")) e.target.src = cleanerImg;
+                      else if (serviceLower.includes("salon") || serviceLower.includes("hair")) e.target.src = barberImg;
+                      else e.target.src = plumberImg;
+                    }}
                   />
                   <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
                     Verified

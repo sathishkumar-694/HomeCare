@@ -10,7 +10,7 @@ const MyBookings = () => {
 
   useEffect(() => {
     // ✅ FIX 1: Changed user._id to user.id
-    if (user && isAuthenticated && user.id) {
+    if (user && isAuthenticated && user._id) {
       console.log("MyBookings - User data available:", user);
       fetchUserBookings();
     } else {
@@ -21,7 +21,7 @@ const MyBookings = () => {
 
   const fetchUserBookings = async () => {
     // ✅ FIX 2: Changed user?._id to user?.id
-    if (!user?.id) {
+    if (!user?._id) {
       console.log("No user ID available for fetching bookings");
       setLoading(false);
       return;

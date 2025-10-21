@@ -2,10 +2,8 @@ import User from "../models/User.js";
 import Vendor from "../models/Vendor.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { verifyGoogleToken } from "../utils/googleAuth.js";
 
-// ============================================
-// 👥 GET ALL USERS (For Admin)
-// ============================================
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({}).select("-password");
@@ -73,11 +71,10 @@ export const loginUser = async (req, res) => {
 
     const token = jwt.sign(
       { id: account._id, role },
-      process.env.JWT_SECRET,
+      process.env.JWT_KEY ,
       { expiresIn: "7d" }
     );
 
-    // ✅ FIXED: Return all data Profile.jsx needs
     res.json({
       message: "Login successful",
       token,
@@ -154,6 +151,59 @@ export const deleteUser = async (req, res) => {
     res.json({ message: "User deleted successfully" });
   } catch (err) {
     console.error("Delete User Error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const googleLogin = async (req, res) => {
+  try {
+    const { email, name, profilePicture } = req.body;
+    
+    if (!email || !name) {
+      return res.status(400).json({ message: "Email and name are required" });
+    }
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+    
+    if (!user) {
+      // Create new user for Google OAuth
+      user = new User({
+        name,
+        email,
+        profilePicture: profilePicture || "",
+        isGoogleUser: true,
+        isActive: true,
+        lastLogin: new Date()
+      });
+      await user.save();
+    } else {
+      // Update last login
+      user.lastLogin = new Date();
+      await user.save();
+    }
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_KEY,
+      { expiresIn: "7d" }
+    );
+
+    res.json({
+      message: "Google login successful",
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone: user.phone || "",
+        address: user.address || "",
+        profilePicture: user.profilePicture || ""
+      }
+    });
+  } catch (err) {
+    console.error("Google Login Error:", err);
     res.status(500).json({ message: err.message });
   }
 };

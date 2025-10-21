@@ -1,27 +1,31 @@
+
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import mongoose from "mongoose";
-// Import routes
 import vendorRoutes from "./routes/vendor.js";
 import userRoutes from "./routes/User.js";
 import adminRoutes from "./routes/admin.js";
 import supportRoutes from "./routes/support.js";
 import bookingRoutes from "./routes/booking.js";
 import contactRoutes from "./routes/Contact.js";
+import feedbackRoutes from "./routes/feedback.js";
+import emailRoutes from "./routes/email.js";
 
+import dotenv from 'dotenv';
+dotenv.config();
+if (!process.env.JWT_KEY) {
+    console.error("❌ Missing JWT secret. Set JWT_KEY in your .env");
+    process.exit(1);
+}
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-dotenv.config();
-connectDB();
+// Validate critical env vars early
 
-// ============================================
-// 		 CORRECTED ROUTES
-// ============================================
-// These are your public routes for login, register, and fetching lists
+
+connectDB();
 app.use("/api/vendor", vendorRoutes);
 app.use("/api/users", userRoutes);
 
@@ -32,8 +36,14 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/support", supportRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/email", emailRoutes);
 
 app.get("/", (req, res) => res.send("API is running"));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () =>
+    { console.log(`Server running on port ${PORT}`)
+        console.log(`uri:${process.env.MONGODB_URI}`)
+})
+

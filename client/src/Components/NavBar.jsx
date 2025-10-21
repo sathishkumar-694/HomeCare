@@ -1,16 +1,28 @@
 import React, { useState, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
+import { Sun, Moon } from "lucide-react";
 
 function Navbar() {
   const navigate = useNavigate();
   const { user, logout, isAdmin, isVendor } = useContext(AuthContext);
   const [dropdown, setDropdown] = useState(false);
+  const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
 
   const handleLogout = () => {
     logout();
     setDropdown(false);
     navigate("/");
+  };
+
+  const toggleTheme = () => {
+    const newTheme = isDark ? "light" : "dark";
+    setIsDark(!isDark);
+    localStorage.setItem("theme", newTheme);
+    
+    // Apply theme to body
+    document.body.style.backgroundColor = newTheme === "dark" ? "#1a202c" : "#f8f9fa";
+    document.body.style.color = newTheme === "dark" ? "#f8f9fa" : "#1a202c";
   };
 
   const linkStyle = ({ isActive }) => ({
@@ -20,9 +32,6 @@ function Navbar() {
     padding: "8px 12px",
     transition: "color 0.2s ease",
   });
-
-  const theme = localStorage.getItem("theme") || "light";
-  const isDark = theme === "dark";
 
   return (
     <nav
@@ -71,6 +80,9 @@ function Navbar() {
           <>
             <NavLink to="/login" style={linkStyle}>
               Login
+            </NavLink>
+            <NavLink to="/vendor-login" style={linkStyle}>
+              Vendor Login
             </NavLink>
             <NavLink to="/signup" style={linkStyle}>
               Sign Up
@@ -173,7 +185,7 @@ function Navbar() {
                 {isVendor() && (
                   <button
                     onClick={() => {
-                      navigate("/dashboard");
+                      navigate("/vendor-dashboard");
                       setDropdown(false);
                     }}
                     style={{
@@ -193,6 +205,33 @@ function Navbar() {
                     Vendor Dashboard
                   </button>
                 )}
+                
+                {/* Theme Toggle */}
+                <button
+                  onClick={() => {
+                    toggleTheme();
+                    setDropdown(false);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "12px 16px",
+                    textAlign: "left",
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+                    color: "inherit",
+                    fontSize: "14px",
+                    transition: "background-color 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = isDark ? "#4a5568" : "#f3f4f6"}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
+                >
+                  {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                  {isDark ? "Light Mode" : "Dark Mode"}
+                </button>
                 
                 <button
                   onClick={handleLogout}

@@ -9,6 +9,7 @@ import Home from "../pages/Home";
 import Services from "../pages/Services";
 import DomainDetails from "../pages/DomainDetails";
 import Login from "../pages/Login";
+import VendorLogin from "../pages/VendorLogin";
 import Register from "../pages/SignUp";
 import Contact from "../pages/Contact";
 import About from "../pages/About";
@@ -17,10 +18,12 @@ import Users from "../pages/Users";
 import Profile from "../pages/Profile";
 import Support from "../pages/Support";
 import Dashboard from "../pages/Dashboard";
+import VendorDashboard from "../pages/VendorDashboard";
 import PaymentPage from "../pages/paymentPage";
 import BookingSuccess from "../pages/BookingSuccess";
 import RoleSelection from "../pages/RoleSelection";
 import MyBookings from "../pages/MyBookings";
+import Feedback from "../pages/Feedback";
 
 // Admin Pages
 import AdminLogin from "../pages/AdminLogin"; // 1. Fixed this component name
@@ -29,6 +32,7 @@ import AdminVendors from "../pages/AdminVendors";
 import AdminUsers from "../pages/AdminUsers";
 import Queries from "../pages/Queries"; // 2. Fixed this component name
 import AdminBookings from "../pages/AdminBookings";
+import EmailNotification from "../pages/EmailNotification";
 
 function AppRoutes() {
   return (
@@ -47,13 +51,16 @@ function AppRoutes() {
               <Route path="/services" element={<Services />} />
               <Route path="/domain" element={<DomainDetails />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/vendor-login" element={<VendorLogin />} />
               <Route path="/signup" element={<Register />} />
               <Route path="/vendor-register" element={<VendorRegister />} />
               <Route path="/users/:username" element={<Users />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/support" element={<Support />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/vendor-dashboard" element={<VendorDashboard />} />
               <Route path="/my-bookings" element={<MyBookings />} />
+              <Route path="/feedback/:bookingId" element={<Feedback />} />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/payment-success" element={<BookingSuccess />} />
             </Routes>
@@ -72,6 +79,7 @@ function AppRoutes() {
         <Route path="vendors" element={<AdminVendors />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="queries" element={<Queries />} />
+        <Route path="email" element={<EmailNotification />} />
       </Route>
     </Routes>
   );

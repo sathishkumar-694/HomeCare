@@ -11,6 +11,8 @@ export const approveVendor = async (req, res) => {
     if (!vendor) {
       return res.status(404).json({ error: "Vendor not found" });
     }
+    // --- ADD THIS LINE ---
+    res.json(vendor); // Send the updated vendor as a response
   } catch (err) {
     console.error("Vendor approval failed:", err);
     res.status(500).json({ error: "Server error" });
@@ -41,8 +43,6 @@ export const getAllVendors = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
-// --- NEW FUNCTIONALITY ---
 
 // Remove vendor (e.g., by Admin)
 export const removeVendor = async (req, res) => {

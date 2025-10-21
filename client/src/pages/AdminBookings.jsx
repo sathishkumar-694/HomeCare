@@ -51,14 +51,17 @@ export default function AdminBookings() {
             {bookings.map((booking) => (
               <tr key={booking._id} className="bg-white border-b border-gray-200">
                 <td className="px-5 py-4 text-sm">
+                  {/* Assumes backend populates 'user' */}
                   {booking.user?.name || "N/A"}
                 </td>
                 <td className="px-5 py-4 text-sm">
-                  {booking.shop?.name || "N/A"} {/* Changed vendor to shop */}
+                  {/* FIXED: Changed from .shop to .vendor */}
+                  {/* Assumes backend populates 'vendor' */}
+                  {booking.vendor?.name || "N/A"}
                 </td>
                 <td className="px-5 py-4 text-sm">
-                  {/* Assuming service name is stored directly */}
-                  {booking.service || "N/A"}
+                  {/* Updated to use serviceName */}
+                  {booking.serviceName || booking.service || "N/A"}
                 </td>
                 <td className="px-5 py-4 text-sm">
                   {new Date(booking.date).toLocaleDateString()}

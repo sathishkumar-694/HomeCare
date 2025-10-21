@@ -10,9 +10,25 @@ export default function PaymentPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // The service/shop data passed from the previous page
   const service = location.state;
 
+  // --- State for all user-provided booking details ---
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  
+  // Pre-fill phone from user context if available, but allow editing
+  const [clientContact, setClientContact] = useState(user?.phone || "");
+  
+  // Pre-fill location from service if available (e.g., shop's address), 
+  // but allow user to change it (e.g., for "at-home" service)
+  const [serviceLocation, setServiceLocation] = useState(service?.location || "");
+  
+  const [notes, setNotes] = useState("");
+  // --- End of State ---
+
   if (!isAuthenticated) {
+    // ... (Your login check is correct, no change)
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-100">
         <div className="text-center">
@@ -26,6 +42,7 @@ export default function PaymentPage() {
   }
 
   if (!service) {
+    // ... (Your service check is correct, no change)
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-100">
         <div className="text-center">
@@ -38,34 +55,46 @@ export default function PaymentPage() {
     );
   }
 
+  // --- Main Booking Function ---
   const handlePayment = async () => {
     setLoading(true);
     setError(null);
 
-    console.log("Payment attempt - User:", user);
-    console.log("Payment attempt - Service:", service);
-    console.log("Payment attempt - User ID:", user?.id); // ✅ UPDATED
-
-    if (!user?.id) { // ✅ UPDATED
-      setError("User ID is missing. Please login again.");
+    // --- Frontend Validation ---
+    if (!date || !time || !clientContact || !serviceLocation) {
+      setError("Please fill in all required fields: Date, Time, Contact, and Location.");
       setLoading(false);
       return;
     }
 
-    if (!service) {
-      setError("Service data is missing. Please try again.");
+    if (!service?.contact) {
+      setError("Vendor contact information is missing. Cannot complete booking.");
       setLoading(false);
       return;
     }
+    // --- End of Validation ---
 
-    // Prepare the data for the backend
+
+    // --- Prepare the data for the backend ---
+    // This object now matches your bookingController.js schema
     const bookingData = {
-      user: user.id, // ✅ UPDATED
-      shop: service._id,
+      // From user context
+      userId: user._id,
+      
+      // From service object (location.state)
+      vendorId: service._id,
       service: service.service,
-      date: service.date,
-      time: service.time,
+      serviceName: service.service,
       amount: service.price,
+      price: service.price,
+      vendorContact: service.contact, // Assumes service object has 'contact'
+
+      // From user input on this page
+      date: date,
+      time: time,
+      clientContact: clientContact,
+      location: serviceLocation,
+      notes: notes,
     };
 
     console.log("Booking data being sent:", bookingData);
@@ -109,7 +138,7 @@ export default function PaymentPage() {
           Confirm Your Booking
         </h2>
 
-        {/* Service Details */}
+        {/* Service Details (Static) */}
         <div className="border-t border-b py-4 mb-6 space-y-2">
           <div className="flex justify-between items-center">
             <p className="text-gray-600">Provider:</p>
@@ -119,13 +148,88 @@ export default function PaymentPage() {
             <p className="text-gray-600">Service:</p>
             <p className="font-semibold text-gray-900">{service.service}</p>
           </div>
-          <div className="flex justify-between items-center">
-            <p className="text-gray-600">Date & Time:</p>
-            <p className="font-semibold text-gray-900">
-              {new Date(service.date).toLocaleDateString()} at {service.time}
-            </p>
+        </div>
+
+        {/* --- Booking Details Form (User Input) --- */}
+        <div className="space-y-4 mb-6">
+          {/* Date and Time Inputs */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+                Date
+              </label>
+              <input
+                type="date"
+                id="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="time" className="block text-sm font-medium text-gray-700">
+                Time
+              </label>
+              <input
+                type="time"
+                id="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Contact Number Input */}
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              Your Contact Number
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              value={clientContact}
+              onChange={(e) => setClientContact(e.target.value)}
+              placeholder="Enter your 10-digit phone number"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+
+          {/* Location Input */}
+          <div>
+            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+              Service Location
+            </label>
+            <input
+              type="text"
+              id="location"
+              value={serviceLocation}
+              onChange={(e) => setServiceLocation(e.target.value)}
+              placeholder="Enter your address"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+
+          {/* Notes Input */}
+          <div>
+            <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
+              Notes (Optional)
+            </label>
+            <textarea
+              id="notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows="2"
+              placeholder="Any special instructions for the vendor?"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
           </div>
         </div>
+        {/* --- End of Form --- */}
 
         {/* Amount */}
         <div className="flex justify-between items-center text-xl mb-6">

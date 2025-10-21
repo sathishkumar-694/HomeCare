@@ -34,7 +34,7 @@ router.get("/bookings", async (req, res) => {
   try {
     const bookings = await Booking.find()
       .populate("user", "name")
-      .populate("shop", "name") // Changed "vendor" to "shop"
+      .populate("vendor", "name") // Changed "vendor" to "shop"
       .sort({ createdAt: -1 });
     res.json(bookings);
   } catch (err) {

@@ -8,13 +8,16 @@ const bookingSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    // ✅ RENAMED: from 'vendor' to 'shop' to match frontend
-    shop: {
+    vendor: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Vendor", // Assumes your vendor model is named "Vendor"
+      ref: "Vendor",
       required: true,
     },
     service: {
+      type: String,
+      required: true,
+    },
+    serviceName: {
       type: String,
       required: true,
     },
@@ -22,7 +25,6 @@ const bookingSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    // ✅ ADDED: Fields from PaymentPage
     time: {
       type: String,
       required: true,
@@ -31,18 +33,47 @@ const bookingSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    price: {
+      type: Number,
+      required: true,
+    },
     status: {
       type: String,
       enum: ["pending", "confirmed", "completed", "cancelled"],
       default: "pending",
     },
-    vendorId: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Vendor" 
-}
+    location: {
+      type: String,
+      required: true,
+    },
+    // Additional fields for better tracking
+    clientName: {
+      type: String,
+      required: true,
+    },
+    clientEmail: {
+      type: String,
+      required: true,
+    },
+    clientContact: {
+      type: String,
+      required: true,
+    },
+    vendorName: {
+      type: String,
+      required: true,
+    },
+    vendorContact: {
+      type: String,
+      required: true,
+    },
+    notes: {
+      type: String,
+      default: ""
+    }
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
 import { API } from "../routes/api.js";
 import axios from "axios";
 
 export default function Dashboard() {
-  const { user, isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { user, isAuthenticated, isVendor } = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -15,15 +17,21 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    if (user && user.role === "vendor") {
-      fetchVendorBookings();
+    // Redirect vendors to vendor dashboard
+    if (isVendor()) {
+      navigate("/vendor-dashboard");
+      return;
     }
-  }, [user]);
+    
+    if (user && user.role === "user") {
+      fetchUserBookings();
+    }
+  }, [user, isVendor, navigate]);
 
-  const fetchVendorBookings = async () => {
+  const fetchUserBookings = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(API.BOOKING.VENDOR_BOOKINGS(user._id), {
+      const res = await axios.get(API.BOOKING.USER_BOOKINGS(user._id), {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -33,7 +41,7 @@ export default function Dashboard() {
       const totalBookings = res.data.length;
       const pendingBookings = res.data.filter(b => b.status === "pending").length;
       const completedBookings = res.data.filter(b => b.status === "completed").length;
-      const totalEarnings = res.data
+      const totalSpent = res.data
         .filter(b => b.status === "completed")
         .reduce((sum, b) => sum + (b.amount || 0), 0);
       
@@ -41,10 +49,10 @@ export default function Dashboard() {
         totalBookings,
         pendingBookings,
         completedBookings,
-        totalEarnings
+        totalEarnings: totalSpent
       });
     } catch (err) {
-      console.error("Error fetching vendor bookings:", err);
+      console.error("Error fetching user bookings:", err);
     } finally {
       setLoading(false);
     }
@@ -118,10 +126,10 @@ export default function Dashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Welcome, {user?.name || user?.shopName}!
+            Welcome, {user?.name}!
           </h1>
           <p className="text-gray-600">
-            Manage your bookings and track your business performance
+            Track your service bookings and manage your account
           </p>
         </div>
 
@@ -177,7 +185,7 @@ export default function Dashboard() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Earnings</p>
+                <p className="text-sm font-medium text-gray-600">Total Spent</p>
                 <p className="text-2xl font-bold text-gray-900">₹{stats.totalEarnings}</p>
               </div>
             </div>
@@ -186,13 +194,13 @@ export default function Dashboard() {
 
         {/* Bookings Section */}
         <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Recent Bookings</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Bookings</h2>
           
           {bookings.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-gray-400 text-6xl mb-4">📅</div>
               <h3 className="text-xl font-semibold text-gray-600 mb-2">No bookings yet</h3>
-              <p className="text-gray-500">Your bookings will appear here once customers start booking your services.</p>
+              <p className="text-gray-500">Your service bookings will appear here once you book services.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -204,16 +212,16 @@ export default function Dashboard() {
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <h3 className="font-semibold text-lg text-gray-800">
-                        {booking.service}
+                        {booking.serviceName || booking.service}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        Customer: {booking.user?.name || "Unknown"}
+                        Vendor: {booking.vendorName || "Unknown"}
                       </p>
                       <p className="text-sm text-gray-600">
-                        Email: {booking.user?.email || "N/A"}
+                        Service Type: {booking.service}
                       </p>
                       <p className="text-sm text-gray-600">
-                        Phone: {booking.user?.phone || "N/A"}
+                        Location: {booking.location || "N/A"}
                       </p>
                     </div>
                     <div className="text-right">
@@ -236,31 +244,11 @@ export default function Dashboard() {
                       <p>Scheduled for: {formatDate(booking.date)} at {booking.time}</p>
                     </div>
                     
-                    {booking.status === "pending" && (
-                      <div className="space-x-2">
-                        <button
-                          onClick={() => updateBookingStatus(booking._id, "confirmed")}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          onClick={() => updateBookingStatus(booking._id, "cancelled")}
-                          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    )}
-                    
-                    {booking.status === "confirmed" && (
-                      <button
-                        onClick={() => updateBookingStatus(booking._id, "completed")}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                      >
-                        Mark Complete
-                      </button>
-                    )}
+                    <div className="text-right">
+                      <p className="text-sm text-gray-500">
+                        Contact: {booking.vendorContact || "N/A"}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}

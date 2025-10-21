@@ -7,6 +7,8 @@ export default function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [bookings, setBookings] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterRole, setFilterRole] = useState("all");
 
   // --- State for the modal ---
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,13 +62,56 @@ export default function AdminUsers() {
     }
   };
 
+  // Filter users based on search term and role
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = searchTerm === "" || 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = filterRole === "all" || user.role === filterRole;
+    return matchesSearch && matchesRole;
+  });
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">Active Users</h1>
 
+      {/* Search and Filter Controls */}
+      <div className="mb-8 space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search Bar */}
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Search users by name or email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          
+          {/* Role Filter */}
+          <div className="md:w-48">
+            <select
+              value={filterRole}
+              onChange={(e) => setFilterRole(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">All Roles</option>
+              <option value="user">Users</option>
+              <option value="admin">Admins</option>
+            </select>
+          </div>
+        </div>
+        
+        {/* Results Count */}
+        <div className="text-sm text-gray-600">
+          Showing {filteredUsers.length} of {users.length} users
+        </div>
+      </div>
+
       {/* --- Main User Grid --- */}
       <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {users.map((u) => (
+        {filteredUsers.map((u) => (
           <div
             key={u._id}
             onClick={() => openUserDetails(u)} // This opens the detail popup
