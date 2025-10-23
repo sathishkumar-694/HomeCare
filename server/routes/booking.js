@@ -7,7 +7,8 @@ import {
   getBookingById,
   rejectBooking,
   approveBooking,
-  completeBooking
+  completeBooking,
+  confirmPayment
 } from "../controller/bookingController.js";
 
 const router = express.Router();
@@ -20,5 +21,6 @@ router.put("/:bookingId/status", updateBookingStatus);
 router.put("/:id/reject", rejectBooking);
 router.put("/:id/approve", approveBooking);
 router.put("/:id/complete", completeBooking);
+router.put("/:id/confirm-payment", confirmPayment);
 
 export default router;

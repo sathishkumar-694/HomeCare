@@ -3,48 +3,50 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
 import { API } from "../routes/api.js";
 import axios from "axios";
+import toast from 'react-hot-toast'; // <-- 1. Import toast
 
-// This is the *NEW* page where the user pays after vendor approval.
 export default function FinalizePayment() {
-  const { bookingId } = useParams(); // Gets 'bookingId' from the URL
-  const location = useLocation();   // Gets the 'amount' passed from the Profile page
+  const { bookingId } = useParams(); 
+  const location = useLocation();   
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext); 
   
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); 
   
-  // Get amount from navigation state (passed from Profile.js)
   const amount = location.state?.amount || 0;
 
   const handlePayment = async () => {
     setLoading(true);
     setError("");
     try {
-      // This is a dummy payment.
-      // In a real app, you would integrate Stripe or Razorpay here.
-      // After their payment is successful, you call this backend route.
+      // --- 2. BUG FIX & CORRECT API CALL ---
+      const token = sessionStorage.getItem("token"); // Use sessionStorage
       
-      const token = localStorage.getItem("token");
+      // Simulate payment gateway success FIRST (in real app)
+      // For now, we assume it succeeded and update our backend.
       
-      // Tell your backend that this booking is now paid
-      await axios.post(API.BOOKING.PAY(bookingId), 
-        { 
-          paymentMethod: "dummy_card", // Send any payment details
-          amount: amount
-        }, 
+      // Call the correct backend endpoint using PUT
+      await axios.put( 
+        API.BOOKING.CONFIRM_PAYMENT(bookingId), // Use the confirm-payment endpoint
+        {}, // No body data needed
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      // ------------------------------------
 
-      // Payment successful!
-      // We'll re-use your existing success page, but with a different message.
-      navigate("/payment-success", { state: { paymentComplete: true } }); 
+      toast.success("Payment successful!"); // Use toast
+
+      // Redirect to profile or a success page
+      navigate("/profile"); 
+      // Or navigate("/payment-success", { state: { paymentComplete: true } }); 
 
     } catch (err) {
-      console.error("Payment failed:", err);
-      setError("Payment failed. Please try again.");
+      console.error("Payment confirmation failed:", err);
+      const errorMsg = err.response?.data?.message || "Payment confirmation failed. Please contact support.";
+      setError(errorMsg); // Show error in the component
+      toast.error(errorMsg); // Also show toast
     } finally {
       setLoading(false);
     }
@@ -65,9 +67,7 @@ export default function FinalizePayment() {
           </div>
         </div>
 
-        {/* In a real app, you would add your payment form (Stripe, etc.) here.
-          For now, we just have a "Pay" button.
-        */}
+        {/* Real payment form (Stripe, etc.) would go here */}
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-4">
@@ -86,4 +86,3 @@ export default function FinalizePayment() {
     </div>
   );
 }
-
