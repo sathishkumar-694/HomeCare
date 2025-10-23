@@ -81,9 +81,6 @@ function Navbar() {
             <NavLink to="/login" style={linkStyle}>
               Login
             </NavLink>
-            <NavLink to="/vendor-login" style={linkStyle}>
-              Vendor Login
-            </NavLink>
             <NavLink to="/signup" style={linkStyle}>
               Sign Up
             </NavLink>
@@ -160,27 +157,7 @@ function Navbar() {
                   View Profile
                 </button>
                 
-                <button
-                  onClick={() => {
-                    navigate("/my-bookings");
-                    setDropdown(false);
-                  }}
-                  style={{
-                    width: "100%",
-                    padding: "12px 16px",
-                    textAlign: "left",
-                    border: "none",
-                    background: "transparent",
-                    cursor: "pointer",
-                    color: "inherit",
-                    fontSize: "14px",
-                    transition: "background-color 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = isDark ? "#4a5568" : "#f3f4f6"}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
-                >
-                  My Bookings
-                </button>
+               
                 
                 {isVendor() && (
                   <button
@@ -206,7 +183,7 @@ function Navbar() {
                   </button>
                 )}
                 
-                {/* Theme Toggle */}
+               {/*
                 <button
                   onClick={() => {
                     toggleTheme();
@@ -232,6 +209,7 @@ function Navbar() {
                   {isDark ? <Sun size={16} /> : <Moon size={16} />}
                   {isDark ? "Light Mode" : "Dark Mode"}
                 </button>
+                */}
                 
                 <button
                   onClick={handleLogout}

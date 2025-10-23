@@ -15,7 +15,7 @@ import emailRoutes from "./routes/email.js";
 import dotenv from 'dotenv';
 dotenv.config();
 if (!process.env.JWT_KEY) {
-    console.error("❌ Missing JWT secret. Set JWT_KEY in your .env");
+    console.error("Missing JWT secret. Set JWT_KEY in your .env");
     process.exit(1);
 }
 const app = express();

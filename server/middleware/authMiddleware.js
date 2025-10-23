@@ -13,3 +13,12 @@ export const protect = async (req, res, next) => {
     res.status(401).json({ message: "Token failed" });
   }
 };
+export const isAdmin = (req, res, next) => {
+  // This middleware must run *after* the 'protect' middleware
+  if (req.user && req.user.role === 'admin') {
+    next(); // User is an admin, proceed to the controller
+  } else {
+    // User is logged in but is NOT an admin
+    res.status(403).json({ message: "Not authorized as an admin" });
+  }
+};
