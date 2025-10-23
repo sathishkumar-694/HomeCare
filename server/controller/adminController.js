@@ -1,64 +1,52 @@
 import Vendor from "../models/Vendor.js";
+export const getPendingVendors = async (req, res) => {
+  try {
+    const vendors = await Vendor.find({ status: "pending" }).select("-password");    
+    if (vendors.length === 0) {
+      return res.status(200).json([]); // Send empty array, not an error
+    }
+    res.status(200).json(vendors);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error", error: err.message });
+  }
+};
 
-// Approve vendor
 export const approveVendor = async (req, res) => {
   try {
+    const vendorId = req.params.id;
+    
+    // Find the vendor by their ID and update their status to "approved"
     const vendor = await Vendor.findByIdAndUpdate(
-      req.params.id,
+      vendorId,
       { status: "approved" },
-      { new: true }
+      { new: true } // This option returns the modified document
     );
+
     if (!vendor) {
-      return res.status(404).json({ error: "Vendor not found" });
+      return res.status(404).json({ message: "Vendor not found" });
     }
-    // --- ADD THIS LINE ---
-    res.json(vendor); // Send the updated vendor as a response
+    res.status(200).json({ message: "Vendor approved successfully", vendor });
+
   } catch (err) {
-    console.error("Vendor approval failed:", err);
-    res.status(500).json({ error: "Server error" });
+    console.error(err);
+    res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
 
-// Reject vendor (which also deletes)
 export const rejectVendor = async (req, res) => {
   try {
-    const vendor = await Vendor.findByIdAndDelete(req.params.id);
+    const vendorId = req.params.id;
+    const vendor = await Vendor.findByIdAndDelete(vendorId);
+
     if (!vendor) {
-      return res.status(404).json({ error: "Vendor not found" });
-    }
-    res.json({ message: "Vendor rejected" });
-  } catch (err) {
-    console.error("Vendor rejection failed:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-};
-
-// Get all vendors (Admin)
-export const getAllVendors = async (req, res) => {
-  try {
-    const vendors = await Vendor.find().sort({ createdAt: -1 });
-    res.json(vendors);
-  } catch (err) {
-    console.error("Error fetching vendors:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-};
-
-// Remove vendor (e.g., by Admin)
-export const removeVendor = async (req, res) => {
-  try {
-    // Find the vendor by its ID and delete it
-    const vendor = await Vendor.findByIdAndDelete(req.params.id);
-
-    // If no vendor was found with that ID
-    if (!vendor) {
-      return res.status(404).json({ error: "Vendor not found" });
+      return res.status(404).json({ message: "Vendor not found" });
     }
 
-    // Send a success message
-    res.json({ message: "Vendor removed successfully" });
+    res.status(200).json({ message: "Vendor rejected and deleted successfully" });
+    
   } catch (err) {
-    console.error("Vendor removal failed:", err);
-    res.status(500).json({ error: "Server error" });
+    console.error(err);
+    res.status(500).json({ message: "Server Error", error: err.message });
   }
 };

@@ -3,6 +3,7 @@ import Vendor from "../models/Vendor.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { verifyGoogleToken } from "../utils/googleAuth.js";
+import mongoose from 'mongoose'; // <-- This is needed by updateUserProfile, so it stays
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -14,12 +15,9 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-// ============================================
-// 📝 REGISTER USER
-// ============================================
 export const registerUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body; // 'username' from form
+    const { username, email, password } = req.body;
     let imagePath = req.file ? req.file.path : null;
 
     if (!username || !email || !password) {
@@ -33,7 +31,7 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
-      name: username, // Save 'username' as 'name' in the DB
+      name: username,
       email,
       password: hashedPassword,
       profilePicture: imagePath,
@@ -47,9 +45,6 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// ============================================
-// 🔐 LOGIN USER
-// ============================================
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -80,12 +75,12 @@ export const loginUser = async (req, res) => {
       token,
       role,
       user: {
-        _id: account._id, // Use _id
+        _id: account._id,
         name: account.name || account.shopName,
         email: account.email,
         role,
-        phone: account.phone || "", // Include phone
-        address: account.address || "", // Include address
+        phone: account.phone || "",
+        address: account.address || "",
         shopName: account.shopName || "",
         service: account.service || "",
         location: account.location || ""
@@ -97,9 +92,6 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// ============================================
-// 👤 GET USER PROFILE BY ID
-// ============================================
 export const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
@@ -111,26 +103,26 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-// ============================================
-// ✏️ UPDATE USER PROFILE (For Profile.jsx)
-// ============================================
 export const updateUserProfile = async (req, res) => {
   try {
     const { name, phone, address } = req.body;
 
-    // Find user and update only an "allowed" list of fields
+    // --- mongoose is used here ---
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+    }
+    // ----------------------------
+
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      { name, phone, address }, // Only update these fields
-      { new: true, runValidators: true } // Return the new, updated doc
+      { name, phone, address },
+      { new: true, runValidators: true }
     ).select("-password");
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Send back the updated user object
-    // Profile.jsx will use this to update localStorage
     res.json({
       message: "Profile updated successfully",
       user: updatedUser,
@@ -141,9 +133,6 @@ export const updateUserProfile = async (req, res) => {
   }
 };
 
-// ============================================
-// 🗑️ DELETE USER (For Admin)
-// ============================================
 export const deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
@@ -163,11 +152,9 @@ export const googleLogin = async (req, res) => {
       return res.status(400).json({ message: "Email and name are required" });
     }
 
-    // Check if user exists
     let user = await User.findOne({ email });
     
     if (!user) {
-      // Create new user for Google OAuth
       user = new User({
         name,
         email,
@@ -178,7 +165,6 @@ export const googleLogin = async (req, res) => {
       });
       await user.save();
     } else {
-      // Update last login
       user.lastLogin = new Date();
       await user.save();
     }
@@ -207,3 +193,5 @@ export const googleLogin = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// --- getUserNotifications function removed ---

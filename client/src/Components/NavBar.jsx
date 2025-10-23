@@ -1,13 +1,22 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon } from "lucide-react"; // Removed Bell
+// axios and API are no longer needed here
+// import axios from "axios";
+// import { API } from "../routes/api.js"; 
 
 function Navbar() {
   const navigate = useNavigate();
   const { user, logout, isAdmin, isVendor } = useContext(AuthContext);
   const [dropdown, setDropdown] = useState(false);
   const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
+
+  // --- Notification state removed ---
+  // const [notifications, setNotifications] = useState([]);
+  // const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
+
+  // --- Notification useEffect removed ---
 
   const handleLogout = () => {
     logout();
@@ -20,9 +29,15 @@ function Navbar() {
     setIsDark(!isDark);
     localStorage.setItem("theme", newTheme);
     
-    // Apply theme to body
     document.body.style.backgroundColor = newTheme === "dark" ? "#1a202c" : "#f8f9fa";
     document.body.style.color = newTheme === "dark" ? "#f8f9fa" : "#1a202c";
+  };
+
+  // --- Notification handlers removed (handleBellClick, handleNotificationClick) ---
+  
+  const handleAvatarClick = () => {
+    setDropdown(!dropdown);
+    // setShowNotificationDropdown(false); // Removed
   };
 
   const linkStyle = ({ isActive }) => ({
@@ -32,6 +47,18 @@ function Navbar() {
     padding: "8px 12px",
     transition: "color 0.2s ease",
   });
+
+  const dropdownButtonStyle = {
+    width: "100%",
+    padding: "12px 16px",
+    textAlign: "left",
+    border: "none",
+    background: "transparent",
+    cursor: "pointer",
+    color: "inherit",
+    fontSize: "14px",
+    transition: "background-color 0.2s ease",
+  };
 
   return (
     <nav
@@ -63,174 +90,111 @@ function Navbar() {
       </h1>
 
       <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-        <NavLink to="/" style={linkStyle}>
-          Home
-        </NavLink>
-        <NavLink to="/about" style={linkStyle}>
-          About
-        </NavLink>
-        <NavLink to="/services" style={linkStyle}>
-          Services
-        </NavLink>
-        <NavLink to="/contact" style={linkStyle}>
-          Contact
-        </NavLink>
+        {/* ... (Your NavLinks are correct) ... */}
+        <NavLink to="/" style={linkStyle}>Home</NavLink>
+        <NavLink to="/about" style={linkStyle}>About</NavLink>
+        <NavLink to="/services" style={linkStyle}>Services</NavLink>
+        <NavLink to="/contact" style={linkStyle}>Contact</NavLink>
 
         {!user && (
           <>
-            <NavLink to="/login" style={linkStyle}>
-              Login
-            </NavLink>
-            <NavLink to="/signup" style={linkStyle}>
-              Sign Up
-            </NavLink>
+            <NavLink to="/login" style={linkStyle}>Login</NavLink>
+            <NavLink to="/signup" style={linkStyle}>Sign Up</NavLink>
           </>
         )}
 
         {user && (
-          <div style={{ position: "relative" }}>
-            <div
-              onClick={() => setDropdown(!dropdown)}
-              style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
-                color: "#fff",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                fontWeight: "bold",
-                cursor: "pointer",
-                userSelect: "none",
-                fontSize: "16px",
-                boxShadow: "0 2px 8px rgba(59, 130, 246, 0.3)",
-              }}
-            >
-              {user.name ? user.name[0].toUpperCase() : "U"}
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          
+            {/* --- Notification Bell and Dropdown REMOVED --- */}
 
-            {dropdown && (
+            <div style={{ position: "relative" }}>
               <div
+                onClick={handleAvatarClick}
                 style={{
-                  position: "absolute",
-                  top: "48px",
-                  right: "0",
-                  backgroundColor: isDark ? "#2d3748" : "#fff",
-                  border: isDark ? "1px solid #4a5568" : "1px solid #e2e8f0",
-                  borderRadius: "12px",
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-                  width: "180px",
-                  zIndex: 100,
-                  color: isDark ? "#f8f9fa" : "#1a202c",
-                  overflow: "hidden",
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+                  color: "#fff",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  userSelect: "none",
+                  fontSize: "16px",
+                  boxShadow: "0 2px 8px rgba(59, 130, 246, 0.3)",
                 }}
               >
-                <div style={{ padding: "8px 12px", borderBottom: "1px solid #e2e8f0" }}>
-                  <div style={{ fontWeight: "bold", fontSize: "14px" }}>
-                    {user.name || "User"}
-                  </div>
-                  <div style={{ fontSize: "12px", color: "#6b7280" }}>
-                    {user.email}
-                  </div>
-                </div>
-                
-                <button
-                  onClick={() => {
-                    navigate("/profile");
-                    setDropdown(false);
-                  }}
+                {user.name ? user.name[0].toUpperCase() : "U"}
+              </div>
+
+              {dropdown && (
+                <div
                   style={{
-                    width: "100%",
-                    padding: "12px 16px",
-                    textAlign: "left",
-                    border: "none",
-                    background: "transparent",
-                    cursor: "pointer",
-                    color: "inherit",
-                    fontSize: "14px",
-                    transition: "background-color 0.2s ease",
+                    position: "absolute",
+                    top: "48px",
+                    right: "0",
+                    backgroundColor: isDark ? "#2d3748" : "#fff",
+                    border: isDark ? "1px solid #4a5568" : "1px solid #e2e8f0",
+                    borderRadius: "12px",
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+                    width: "180px",
+                    zIndex: 100,
+                    color: isDark ? "#f8f9fa" : "#1a202c",
+                    overflow: "hidden",
                   }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = isDark ? "#4a5568" : "#f3f4f6"}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
                 >
-                  View Profile
-                </button>
-                
-               
-                
-                {isVendor() && (
+                  <div style={{ padding: "8px 12px", borderBottom: "1px solid #e2e8f0" }}>
+                    <div style={{ fontWeight: "bold", fontSize: "14px" }}>
+                      {user.name || "User"}
+                    </div>
+                    <div style={{ fontSize: "12px", color: "#6b7280" }}>
+                      {user.email}
+                    </div>
+                  </div>
+                  
                   <button
                     onClick={() => {
-                      navigate("/vendor-dashboard");
+                      navigate("/profile");
                       setDropdown(false);
                     }}
+                    style={dropdownButtonStyle}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = isDark ? "#4a5568" : "#f3f4f6"}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
+                  >
+                    View Profile
+                  </button>
+                  
+                  {isVendor() && (
+                    <button
+                      onClick={() => {
+                        navigate("/vendor-dashboard");
+                        setDropdown(false);
+                      }}
+                      style={dropdownButtonStyle}
+                      onMouseEnter={(e) => e.target.style.backgroundColor = isDark ? "#4a5568" : "#f3f4f6"}
+                      onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
+                    >
+                      Vendor Dashboard
+                    </button>
+                  )}
+                  
+                  <button
+                    onClick={handleLogout}
                     style={{
-                      width: "100%",
-                      padding: "12px 16px",
-                      textAlign: "left",
-                      border: "none",
-                      background: "transparent",
-                      cursor: "pointer",
-                      color: "inherit",
-                      fontSize: "14px",
-                      transition: "background-color 0.2s ease",
+                      ...dropdownButtonStyle,
+                      color: "#ef4444",
                     }}
                     onMouseEnter={(e) => e.target.style.backgroundColor = isDark ? "#4a5568" : "#f3f4f6"}
                     onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
                   >
-                    Vendor Dashboard
+                    Logout
                   </button>
-                )}
-                
-               {/*
-                <button
-                  onClick={() => {
-                    toggleTheme();
-                    setDropdown(false);
-                  }}
-                  style={{
-                    width: "100%",
-                    padding: "12px 16px",
-                    textAlign: "left",
-                    border: "none",
-                    background: "transparent",
-                    cursor: "pointer",
-                    color: "inherit",
-                    fontSize: "14px",
-                    transition: "background-color 0.2s ease",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = isDark ? "#4a5568" : "#f3f4f6"}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
-                >
-                  {isDark ? <Sun size={16} /> : <Moon size={16} />}
-                  {isDark ? "Light Mode" : "Dark Mode"}
-                </button>
-                */}
-                
-                <button
-                  onClick={handleLogout}
-                  style={{
-                    width: "100%",
-                    padding: "12px 16px",
-                    textAlign: "left",
-                    border: "none",
-                    background: "transparent",
-                    cursor: "pointer",
-                    color: "#ef4444",
-                    fontSize: "14px",
-                    transition: "background-color 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = isDark ? "#4a5568" : "#f3f4f6"}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
-                >
-                  Logout
-                </button>
-              </div>
-            )}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

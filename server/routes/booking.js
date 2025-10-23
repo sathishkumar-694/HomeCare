@@ -4,24 +4,21 @@ import {
   getUserBookings, 
   getVendorBookings, 
   updateBookingStatus,
-  getBookingById 
+  getBookingById,
+  rejectBooking,
+  approveBooking,
+  completeBooking
 } from "../controller/bookingController.js";
 
 const router = express.Router();
 
-// POST /api/bookings/create
 router.post("/create", createBooking);
-
-// GET /api/bookings/user/:userId
 router.get("/user/:userId", getUserBookings);
-
-// GET /api/bookings/vendor/:vendorId
 router.get("/vendor/:vendorId", getVendorBookings);
-
-// GET /api/bookings/:id
 router.get("/:id", getBookingById);
-
-// PUT /api/bookings/:bookingId/status
 router.put("/:bookingId/status", updateBookingStatus);
+router.put("/:id/reject", rejectBooking);
+router.put("/:id/approve", approveBooking);
+router.put("/:id/complete", completeBooking);
 
 export default router;

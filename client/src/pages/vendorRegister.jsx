@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react"; // NEW: Added useRef and useEffect
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
 import { API } from "../routes/api.js";
@@ -18,6 +18,42 @@ export default function VendorRegister() {
     photo: null,
   });
   const [loading, setLoading] = useState(false);
+
+  // NEW: State for the notification
+  const [notification, setNotification] = useState({
+    show: false,
+    message: "",
+    type: "success", // 'success' or 'error'
+  });
+  
+  // NEW: Ref to manage the notification timeout
+  const notificationTimeout = useRef(null);
+
+  // NEW: Helper function to show the notification
+  function showNotification(message, type = "success") {
+    // Clear any existing timeout
+    if (notificationTimeout.current) {
+      clearTimeout(notificationTimeout.current);
+    }
+    
+    // Show new notification
+    setNotification({ show: true, message, type });
+
+    // Set a timeout to hide it after 3 seconds
+    notificationTimeout.current = setTimeout(() => {
+      setNotification({ show: false, message: "", type: "success" });
+      notificationTimeout.current = null;
+    }, 3000);
+  }
+  
+  // NEW: Clean up the timeout if the component unmounts
+  useEffect(() => {
+    return () => {
+      if (notificationTimeout.current) {
+        clearTimeout(notificationTimeout.current);
+      }
+    };
+  }, []);
 
   function handleChange(e) {
     const { name, value, files } = e.target;
@@ -50,8 +86,6 @@ export default function VendorRegister() {
           'Content-Type': 'multipart/form-data',
         },
       });
-
-      alert(`✅ Thank you ${res.data.vendor.name}, your application was submitted!`);
       
       // After successful registration, automatically log the vendor in
       const loginRes = await axios.post(API.USER.LOGIN(), {
@@ -60,18 +94,51 @@ export default function VendorRegister() {
       });
       
       login(loginRes.data.user, loginRes.data.token);
-      navigate("/dashboard");
+
+      // NEW: Show success notification
+      showNotification(
+        `✅ Welcome, ${res.data.vendor.name}! Redirecting to dashboard...`,
+        "success"
+      );
+      
+      // NEW: Delay navigation to allow user to see the message
+      // The button will remain disabled since loading is still true.
+      setTimeout(() => {
+        navigate("/dashboard");
+        setLoading(false); // Set loading to false *after* navigation
+      }, 3000);
       
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "❌ Error submitting application");
-    } finally {
-      setLoading(false);
+      
+      // NEW: Show error notification
+      showNotification(
+        err.response?.data?.message || "❌ Error submitting application",
+        "error"
+      );
+      setLoading(false); // Set loading to false immediately on error
     }
+    // NEW: Removed the 'finally' block as logic is now handled
+    // in the try/catch blocks to allow for delayed navigation on success.
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-6">
+    // NEW: Added 'relative' to the container for positioning the toast
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-6 relative">
+      
+      {/* --- NEW: Notification Toast --- */}
+      {notification.show && (
+        <div 
+          className={`fixed top-5 left-1/2 -translate-x-1/2 px-6 py-3 rounded-lg shadow-xl text-white font-medium z-50 transition-all duration-300
+            ${notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'}
+            ${notification.show ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}
+          `}
+        >
+          {notification.message}
+        </div>
+      )}
+      {/* --- End Notification --- */}
+      
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
@@ -209,7 +276,7 @@ export default function VendorRegister() {
 
           <button 
             type="submit"
-            className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-medium py-3 rounded-xl shadow-md transition-all duration-200 transform hover:scale-105"
+            className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-medium py-3 rounded-xl shadow-md transition-all duration-200 transform hover:scale-105 disabled:opacity-70 disabled:scale-100"
             disabled={loading}
           >
             {loading ? "Submitting Application..." : "Submit Application 🚀"}

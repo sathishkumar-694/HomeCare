@@ -6,7 +6,6 @@ export const createBooking = async (req, res) => {
   try {
     console.log("Booking request body:", req.body);
 
-    // --- 1. DESTRUCTURE ALL FIELDS FROM REQ.BODY ---
     const {
       userId,
       vendorId,
@@ -17,12 +16,11 @@ export const createBooking = async (req, res) => {
       amount,
       price,
       location,
-      clientContact, // <-- ADDED
-      vendorContact, // <-- ADDED
+      clientContact,
+      vendorContact,
       notes,
     } = req.body;
 
-    // --- 2. VALIDATE ALL REQUIRED FIELDS ---
     if (
       !userId ||
       !vendorId ||
@@ -33,15 +31,14 @@ export const createBooking = async (req, res) => {
       !amount ||
       !price ||
       !location ||
-      !clientContact || // <-- ADDED
-      !vendorContact    // <-- ADDED
+      !clientContact ||
+      !vendorContact
     ) {
       return res.status(400).json({
         message: "All required booking fields are missing",
       });
     }
 
-    // Get user and vendor details
     const user = await User.findById(userId);
     const vendor = await Vendor.findById(vendorId);
 
@@ -49,7 +46,6 @@ export const createBooking = async (req, res) => {
       return res.status(404).json({ message: "User or vendor not found" });
     }
 
-    // --- 3. CREATE BOOKING WITH DATA FROM REQ.BODY ---
     const newBooking = new Booking({
       user: userId,
       vendor: vendorId,
@@ -61,12 +57,11 @@ export const createBooking = async (req, res) => {
       price,
       location,
       notes: notes || "",
-      // Additional fields for better tracking
       clientName: user.name,
       clientEmail: user.email,
-      clientContact: clientContact, // <-- CHANGED (from user.phone)
+      clientContact: clientContact,
       vendorName: vendor.name,
-      vendorContact: vendorContact, // <-- CHANGED (from vendor.contact)
+      vendorContact: vendorContact,
     });
 
     await newBooking.save();
@@ -79,7 +74,6 @@ export const createBooking = async (req, res) => {
   }
 };
 
-//all bookings
 export const getUserBookings = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -94,7 +88,6 @@ export const getUserBookings = async (req, res) => {
   }
 };
 
-//Vendor Dashboard
 export const getVendorBookings = async (req, res) => {
   try {
     const { vendorId } = req.params;
@@ -109,7 +102,6 @@ export const getVendorBookings = async (req, res) => {
   }
 };
 
-// GET /api/bookings/:id
 export const getBookingById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -118,7 +110,7 @@ export const getBookingById = async (req, res) => {
       .populate("vendor", "name shopName service contact location photo");
 
     if (!booking) {
-      return res.status(4404).json({ message: "Booking not found" });
+      return res.status(404).json({ message: "Booking not found" });
     }
 
     res.json(booking);
@@ -128,9 +120,6 @@ export const getBookingById = async (req, res) => {
   }
 };
 
-// ============================================
-// 🔄 UPDATE BOOKING STATUS (For Vendor Dashboard)
-// ============================================
 export const updateBookingStatus = async (req, res) => {
   try {
     const { bookingId } = req.params;
@@ -159,5 +148,83 @@ export const updateBookingStatus = async (req, res) => {
   } catch (err) {
     console.error("Update Booking Status Error:", err);
     res.status(500).json({ message: err.message });
+  }
+};
+
+export const rejectBooking = async (req, res) => {
+  try {
+    const { id } = req.params; 
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      id,
+      { status: 'cancelled' }, 
+      { new: true } 
+    )
+    .populate("user", "name email phone")
+    .populate("vendor", "name shopName");
+
+    if (!updatedBooking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    
+    res.status(200).json({ 
+      message: "Booking rejected successfully", 
+      booking: updatedBooking 
+    });
+  } catch (error) {
+    console.error("Error rejecting booking:", error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const approveBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      id,
+      { 
+        status: 'confirmed',
+        paymentStatus: 'pending' 
+      },
+      { new: true }
+    )
+    .populate("user", "name email phone") 
+    .populate("vendor", "name shopName");
+
+    if (!updatedBooking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    
+    res.status(200).json({ 
+      message: "Booking approved successfully", 
+      booking: updatedBooking 
+    });
+  } catch (error) {
+    console.error("Error approving booking:", error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const completeBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      id,
+      { status: 'completed' },
+      { new: true }
+    )
+    .populate("user", "name email phone")
+    .populate("vendor", "name shopName");
+
+    if (!updatedBooking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    
+    res.status(200).json({ 
+      message: "Booking marked as complete", 
+      booking: updatedBooking 
+    });
+  } catch (error) {
+    console.error("Error completing booking:", error);
+    res.status(500).json({ message: 'Server error' });
   }
 };

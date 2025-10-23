@@ -8,8 +8,10 @@ export const AuthProvider = ({ children }) => {
 
   // Check if user already logged in
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token");
+    // --- CHANGED ---
+    const storedUser = sessionStorage.getItem("user");
+    const storedToken = sessionStorage.getItem("token");
+    // ---------------
     
     console.log("AuthContext - Stored user:", storedUser);
     console.log("AuthContext - Stored token:", storedToken ? "Present" : "Missing");
@@ -22,8 +24,10 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Error parsing stored user data:", error);
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
+        // --- CHANGED ---
+        sessionStorage.removeItem("user");
+        sessionStorage.removeItem("token");
+        // ---------------
       }
     }
   }, []);
@@ -33,17 +37,21 @@ export const AuthProvider = ({ children }) => {
     console.log("AuthContext - Login called with token:", token ? "Present" : "Missing");
     setUser(userData);
     setIsAuthenticated(true);
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("token", token);
-    console.log("AuthContext - User data stored in localStorage");
+    // --- CHANGED ---
+    sessionStorage.setItem("user", JSON.stringify(userData));
+    sessionStorage.setItem("token", token);
+    // ---------------
+    console.log("AuthContext - User data stored in sessionStorage");
   };
 
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    // --- CHANGED ---
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("role"); // Note: You were removing "role" here, which is fine
+    // ---------------
   };
 
   const isAdmin = () => {

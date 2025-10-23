@@ -34,6 +34,8 @@ import Queries from "../pages/Queries"; // 2. Fixed this component name
 import AdminBookings from "../pages/AdminBookings";
 import EmailNotification from "../pages/EmailNotification";
 
+import FinalizePayment from '../pages/FinalizePayment';
+
 function AppRoutes() {
   return (
     <Routes>
@@ -63,6 +65,7 @@ function AppRoutes() {
               <Route path="/feedback/:bookingId" element={<Feedback />} />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/payment-success" element={<BookingSuccess />} />
+              <Route path="/finalize-payment/:bookingId" element={<FinalizePayment />} />
             </Routes>
             <Footer />
           </>

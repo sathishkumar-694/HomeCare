@@ -6,7 +6,8 @@ import {
   getUserProfile, 
   updateUserProfile, 
   deleteUser, 
-  googleLogin 
+  googleLogin
+  // --- getUserNotifications removed ---
 } from "../controller/userController.js";
 import upload from "../middleware/multer.js";
 
@@ -41,6 +42,8 @@ router.get("/:id", getUserProfile);
 // ✏️ UPDATE USER PROFILE
 // ============================================
 router.put("/:id", updateUserProfile);
+
+// --- GET USER NOTIFICATIONS route removed ---
 
 // ============================================
 // 🗑️ DELETE USER

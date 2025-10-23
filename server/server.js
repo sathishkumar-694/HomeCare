@@ -1,4 +1,3 @@
-
 import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js";
@@ -12,27 +11,42 @@ import contactRoutes from "./routes/Contact.js";
 import feedbackRoutes from "./routes/feedback.js";
 import emailRoutes from "./routes/email.js";
 
+// --- NEW IMPORTS (Add these) ---
+import path from "path";
+import { fileURLToPath } from "url";
+// ---------------------------------
+
 import dotenv from 'dotenv';
 dotenv.config();
+
 if (!process.env.JWT_KEY) {
-    console.error("Missing JWT secret. Set JWT_KEY in your .env");
-    process.exit(1);
+    console.error("Missing JWT secret. Set JWT_KEY in your .env");
+    process.exit(1);
 }
+
+// --- NEW BOILERPLATE (Add these for ES Modules) ---
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// --------------------------------------------------
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 // Validate critical env vars early
 
-
 connectDB();
+
+// --- THIS IS THE FIX (Add this line) ---
+// This line makes your 'uploads' folder public so images can be loaded.
+// Place it *before* your API routes.
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// ----------------------------------------
+
+// --- Your API routes ---
 app.use("/api/vendor", vendorRoutes);
 app.use("/api/users", userRoutes);
-
-// This is your admin route for approving, rejecting, and removing
 app.use("/api/admin", adminRoutes);
-
-// These are your other routes
 app.use("/api/support", supportRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/contact", contactRoutes);
@@ -43,7 +57,6 @@ app.get("/", (req, res) => res.send("API is running"));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
-    { console.log(`Server running on port ${PORT}`)
-        console.log(`uri:${process.env.MONGODB_URI}`)
+    { console.log(`Server running on port ${PORT}`)
+        console.log(`uri:${process.env.MONGODB_URI}`)
 })
-

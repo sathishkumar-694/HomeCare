@@ -7,9 +7,11 @@ export const API = {
     LOGIN: () => `${BASE_URL}/users/login`,
     GOOGLE_LOGIN: () => `${BASE_URL}/users/google-login`,
     REGISTER: () => `${BASE_URL}/users/register`,
-    PROFILE: (id) => `${BASE_URL}/users/${id}`, // For PUT (update) and GET (get profile)
+    PROFILE: (id) => `${BASE_URL}/users/${id}`,
     GET_ALL: () => `${BASE_URL}/users`,
     DELETE: (id) => `${BASE_URL}/users/${id}`,
+    NOTIFICATIONS: (userId) => `${BASE_URL}/users/${userId}/notifications`, // <-- NEW
+    MARK_NOTIFICATIONS_READ: (userId) => `${BASE_URL}/users/${userId}/notifications/mark-read`, // <-- NEW
   },
 
   // 📅 Booking endpoints
@@ -18,7 +20,25 @@ export const API = {
     USER_BOOKINGS: (userId) => `${BASE_URL}/bookings/user/${userId}`,
     VENDOR_BOOKINGS: (vendorId) => `${BASE_URL}/bookings/vendor/${vendorId}`,
     GET_BY_ID: (id) => `${BASE_URL}/bookings/${id}`,
-    UPDATE_STATUS: (id) => `${BASE_URL}/bookings/${id}/status`,
+    
+    // --- NEW, SPECIFIC ENDPOINTS ---
+    // (Replaces the generic 'UPDATE_STATUS')
+    
+    // Called by Vendor to approve a 'pending' booking
+    // Backend MUST set status='confirmed' & create a notification
+    APPROVE: (id) => `${BASE_URL}/bookings/${id}/approve`, // <-- NEW
+
+    // Called by Vendor to reject a 'pending' booking
+    // Backend MUST set status='cancelled' & create a notification
+    REJECT: (id) => `${BASE_URL}/bookings/${id}/reject`, // <-- NEW
+    
+    // Called by User to pay for a 'confirmed' booking
+    // Backend MUST set paymentStatus='completed'
+    PAY: (id) => `${BASE_URL}/bookings/${id}/pay`, // <-- NEW
+    
+    // Called by Vendor to complete a 'confirmed' & 'paid' booking
+    // Backend MUST set status='completed'
+    COMPLETE: (id) => `${BASE_URL}/bookings/${id}/complete`, // <-- NEW
   },
 
   // 🧑‍🔧 Vendor endpoints
@@ -31,12 +51,12 @@ export const API = {
     REJECT: (id) => `${BASE_URL}/admin/vendors/${id}/reject`,
     REMOVE: (id) => `${BASE_URL}/admin/vendors/${id}/remove`,
   },
-
+  
   // 👑 Admin endpoints
   ADMIN: {
     LOGIN: () => `${BASE_URL}/admin/login`,
     STATS: () => `${BASE_URL}/admin/stats`,
-    BOOKINGS: () => `${BASE_URL}/admin/bookings`, // <-- ADD THIS LINE
+    BOOKINGS: () => `${BASE_URL}/admin/bookings`,
   },
 
   // ✉️ Contact & Query endpoints

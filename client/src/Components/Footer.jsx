@@ -56,14 +56,14 @@ function Footer() {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Mail className="text-blue-400" size={18} />
-                <a href="mailto:support@homecare.com" className="text-gray-300 hover:text-blue-400 transition-colors">
-                  support@homecare.com
+                <a href="mailto:homecare026@gmail.com" className="text-gray-300 hover:text-blue-400 transition-colors">
+                  homecare026@gmail.com
                 </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="text-green-400" size={18} />
-                <a href="tel:+1234567890" className="text-gray-300 hover:text-green-400 transition-colors">
-                  +1 (234) 567-890
+                <a href="tel:+91 8705677452" className="text-gray-300 hover:text-green-400 transition-colors">
+                  +91 8705677452
                 </a>
               </div>
               <div className="flex items-center space-x-3">
