@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
 import { API } from "../routes/api.js";
 import axios from "axios";
+import toast from 'react-hot-toast';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function Dashboard() {
 
   const fetchUserBookings = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(API.BOOKING.USER_BOOKINGS(user._id), {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -60,7 +61,7 @@ export default function Dashboard() {
 
   const updateBookingStatus = async (bookingId, newStatus) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.put(`http://localhost:5000/api/bookings/${bookingId}/status`, 
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -70,7 +71,7 @@ export default function Dashboard() {
       fetchVendorBookings();
     } catch (err) {
       console.error("Error updating booking status:", err);
-      alert("Failed to update booking status");
+      toast.error("Failed to update booking status");
     }
   };
 

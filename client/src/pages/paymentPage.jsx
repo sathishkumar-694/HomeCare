@@ -82,7 +82,7 @@ export default function PaymentPage() {
     console.log("Booking data being sent:", bookingData);
 
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       // This API call just creates the booking with status: 'pending'
       const response = await fetch(API.BOOKING.CREATE(), {
         method: "POST",

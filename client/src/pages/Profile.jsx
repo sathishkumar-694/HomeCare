@@ -228,7 +228,7 @@ export default function Profile() {
                 console.log("Booking data in Profile:", booking); // Added console log
                 const statusInfo = getBookingStatus(booking);
                 const Icon = statusInfo.icon; 
-                const canPay = booking.status === 'confirmed' 
+                const canPay = booking.status === 'confirmed' && booking.paymentStatus === 'pending'
                 console.log(`Booking ID: ${booking._id}, Status: ${booking.status}, Payment Status: ${booking.paymentStatus}, Can Pay: ${canPay}`); // Added console log
                 
                 return (

@@ -28,11 +28,11 @@ const MyBookings = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      console.log("Fetching bookings for user:", user.id); // Changed for logging
+      const token = sessionStorage.getItem("token");
+      console.log("Fetching bookings for user:", user._id); // Changed for logging
       
-      // ✅ FIX 3: Changed user._id to user.id
-      const res = await axios.get(API.BOOKING.USER_BOOKINGS(user.id), {
+      // ✅ FIX 3: Changed user._id to user._id
+      const res = await axios.get(API.BOOKING.USER_BOOKINGS(user._id), {
         headers: { Authorization: `Bearer ${token}` }
       });
       

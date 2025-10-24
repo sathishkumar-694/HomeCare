@@ -10,17 +10,18 @@ import {
   completeBooking,
   confirmPayment
 } from "../controller/bookingController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/create", createBooking);
-router.get("/user/:userId", getUserBookings);
-router.get("/vendor/:vendorId", getVendorBookings);
-router.get("/:id", getBookingById);
-router.put("/:bookingId/status", updateBookingStatus);
-router.put("/:id/reject", rejectBooking);
-router.put("/:id/approve", approveBooking);
-router.put("/:id/complete", completeBooking);
-router.put("/:id/confirm-payment", confirmPayment);
+router.post("/create", protect, createBooking);
+router.get("/user/:userId", protect, getUserBookings);
+router.get("/vendor/:vendorId", protect, getVendorBookings);
+router.get("/:id", protect, getBookingById);
+router.put("/:bookingId/status", protect, updateBookingStatus);
+router.put("/:id/reject", protect, rejectBooking);
+router.put("/:id/approve", protect, approveBooking);
+router.put("/:id/complete", protect, completeBooking);
+router.put("/:id/confirm-payment", protect, confirmPayment);
 
 export default router;
