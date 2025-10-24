@@ -15,8 +15,6 @@ export const getPendingVendors = async (req, res) => {
 export const approveVendor = async (req, res) => {
   try {
     const vendorId = req.params.id;
-    
-    // Find the vendor by their ID and update their status to "approved"
     const vendor = await Vendor.findByIdAndUpdate(
       vendorId,
       { status: "approved" },

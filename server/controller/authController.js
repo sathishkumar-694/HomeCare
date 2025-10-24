@@ -3,7 +3,6 @@ import Vendor from "../models/Vendor.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// User registration
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -12,7 +11,6 @@ export const registerUser = async (req, res) => {
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
-
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: "User already exists" });
 
@@ -31,8 +29,6 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-// Login (User or Vendor)
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -67,7 +63,8 @@ export const loginUser = async (req, res) => {
         location: account.location || ""
       },
     });
-  } catch (err) {
+  } 
+  catch (err) {
     console.error("Login failed:", err);
     res.status(500).json({ message: err.message });
   }

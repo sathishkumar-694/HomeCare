@@ -6,12 +6,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Check if user already logged in
   useEffect(() => {
-    // --- CHANGED ---
     const storedUser = sessionStorage.getItem("user");
     const storedToken = sessionStorage.getItem("token");
-    // ---------------
     
     console.log("AuthContext - Stored user:", storedUser);
     console.log("AuthContext - Stored token:", storedToken ? "Present" : "Missing");

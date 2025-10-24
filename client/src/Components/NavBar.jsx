@@ -2,22 +2,12 @@ import React, { useState, useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
 import { Sun, Moon } from "lucide-react"; // Removed Bell
-// axios and API are no longer needed here
-// import axios from "axios";
-// import { API } from "../routes/api.js"; 
 
 function Navbar() {
   const navigate = useNavigate();
   const { user, logout, isAdmin, isVendor } = useContext(AuthContext);
   const [dropdown, setDropdown] = useState(false);
   const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
-
-  // --- Notification state removed ---
-  // const [notifications, setNotifications] = useState([]);
-  // const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
-
-  // --- Notification useEffect removed ---
-
   const handleLogout = () => {
     logout();
     setDropdown(false);
