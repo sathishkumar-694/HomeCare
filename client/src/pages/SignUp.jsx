@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { API } from "../routes/api.js";
 import { AuthContext } from "../context/authContext.jsx";
 import axios from "axios";
+import toast from 'react-hot-toast';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function SignUp() {
       navigate("/profile");
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Registration failed");
+      toast.error(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }

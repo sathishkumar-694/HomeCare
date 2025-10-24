@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { API } from "../routes/api";
 import { Mail, Phone, Instagram, X } from "lucide-react";
+import toast from 'react-hot-toast';
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -19,11 +20,11 @@ export default function Contact() {
 
     try {
       await axios.post(API.CONTACT.SEND(), form);
-      alert(`Thanks ${form.name}, your message has been sent!`);
+      toast.success(`Thanks ${form.name}, your message has been sent!`);
       setForm({ name: "", email: "", message: "" });
     } catch (err) {
       console.error("Error submitting query:", err);
-      alert("Failed to send message. Please try again later.");
+      toast.error("Failed to send message. Please try again later.");
     } finally {
       setLoading(false);
     }

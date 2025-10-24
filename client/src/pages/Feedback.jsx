@@ -4,6 +4,7 @@ import { AuthContext } from "../context/authContext.jsx";
 import { API } from "../routes/api.js";
 import axios from "axios";
 import { Star, ThumbsUp, ThumbsDown } from "lucide-react";
+import toast from 'react-hot-toast';
 
 export default function Feedback() {
   const { user, isAuthenticated } = useContext(AuthContext);
@@ -30,7 +31,7 @@ export default function Feedback() {
       setBooking(res.data);
     } catch (err) {
       console.error("Error fetching booking details:", err);
-      alert("Error loading booking details");
+      toast.error("Error loading booking details");
     } finally {
       setLoading(false);
     }
@@ -47,7 +48,7 @@ export default function Feedback() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!feedback.rating || feedback.wouldRecommend === null) {
-      alert("Please provide a rating and recommendation");
+      toast.error("Please provide a rating and recommendation");
       return;
     }
 
@@ -62,11 +63,11 @@ export default function Feedback() {
         wouldRecommend: feedback.wouldRecommend
       });
 
-      alert("Thank you for your feedback!");
+      toast.success("Thank you for your feedback!");
       navigate("/my-bookings");
     } catch (err) {
       console.error("Error submitting feedback:", err);
-      alert("Error submitting feedback. Please try again.");
+      toast.error("Error submitting feedback. Please try again.");
     } finally {
       setSubmitting(false);
     }

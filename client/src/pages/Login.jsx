@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { API } from "../routes/api.js";
 import { AuthContext } from "../context/authContext.jsx";
 import axios from "axios";
+import toast from 'react-hot-toast';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ export default function Login() {
       }
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Login failed");
+      toast.error(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }

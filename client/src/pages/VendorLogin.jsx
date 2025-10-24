@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { API } from "../routes/api.js";
 import { AuthContext } from "../context/authContext.jsx";
 import axios from "axios";
+import toast from 'react-hot-toast';
 
 export default function VendorLogin() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export default function VendorLogin() {
       navigate("/dashboard");
     } catch (err) {
       console.error("Google login error:", err);
-      alert("Google login failed. Please try again or register as a vendor first.");
+      toast.error("Google login failed. Please try again or register as a vendor first.");
     } finally {
       setLoading(false);
     }
@@ -75,7 +76,7 @@ export default function VendorLogin() {
       navigate("/dashboard");
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Login failed");
+      toast.error(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }

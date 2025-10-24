@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from 'react-hot-toast';
 
 export default function Support() {
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
@@ -12,7 +13,7 @@ export default function Support() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
-    alert("Your request has been submitted. Our team will call you soon!");
+    toast.success("Your request has been submitted. Our team will call you soon!");
     setForm({ name: "", phone: "", message: "" });
   };
 

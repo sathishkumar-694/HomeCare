@@ -3,6 +3,7 @@ import { AuthContext } from "../context/authContext.jsx";
 import { API } from "../routes/api.js";
 import axios from "axios";
 import { Mail, Send, X } from "lucide-react";
+import toast from 'react-hot-toast';
 
 export default function EmailNotification() {
   // --- ADD 'token' from your context ---
@@ -67,11 +68,11 @@ export default function EmailNotification() {
     } catch (err) {
       // --- UPDATED: More specific error for 401 ---
       if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-        alert("Authentication error. Please log in again.");
+        toast.error("Authentication error. Please log in again.");
         // here you might want to log the user out
       } else {
         console.error("Error fetching recipients:", err);
-        alert("Error loading recipients");
+        toast.error("Error loading recipients");
       }
     } finally {
       setLoading(false);
@@ -92,12 +93,12 @@ export default function EmailNotification() {
   const handleSendEmail = async (e) => {
     e.preventDefault();
     if (selectedRecipients.length === 0) {
-      alert("Please select at least one recipient");
+      toast.error("Please select at least one recipient");
       return;
     }
 
     if (!emailData.subject || !emailData.message) {
-      alert("Please fill in subject and message");
+      toast.error("Please fill in subject and message");
       return;
     }
 
@@ -116,18 +117,18 @@ export default function EmailNotification() {
       // --- UPDATED: Pass payload and config as separate arguments ---
       await axios.post(API.EMAIL.SEND_NOTIFICATION(), emailPayload, config);
 
-      alert("Email notification sent successfully!");
+      toast.success("Email notification sent successfully!");
       setEmailData({ subject: "", message: "", type: "general" });
       setSelectedRecipients([]);
     } catch (err) {
       console.error("Error sending email:", err);
       // --- UPDATED: More specific error handling ---
       if (err.response && err.response.status === 401) {
-         alert("Error: Not authorized. Your session may have expired.");
+         toast.error("Error: Not authorized. Your session may have expired.");
       } else if (err.response && err.response.status === 403) {
-         alert("Error: You do not have permission to perform this action.");
+         toast.error("Error: You do not have permission to perform this action.");
       } else {
-         alert("Error sending email notification");
+         toast.error("Error sending email notification");
       }
     } finally {
       setSubmitting(false);

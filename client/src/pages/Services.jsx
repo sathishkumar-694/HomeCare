@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext.jsx";
 import { API } from "../routes/api.js";
 import axios from "axios";
+import toast from 'react-hot-toast';
 
 // Import your images
 import plumberImg from "../assets/plumber.jpg";
@@ -60,7 +61,7 @@ export default function ServicesList() {
 
   const handleBookNow = (vendor) => {
     if (!isAuthenticated) {
-      alert("Please login to book a service");
+      toast.error("Please login to book a service");
       navigate("/login");
       return;
     }
