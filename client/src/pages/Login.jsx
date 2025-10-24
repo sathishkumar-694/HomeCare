@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import InputField from "../Components/InputField.jsx";
 import Button from "../Components/Button.jsx";
 import { Link, useNavigate } from "react-router-dom";
@@ -17,6 +17,88 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
+  const handleGoogleResponse = async (response) => {
+    try {
+      setLoading(true);
+      const payload = JSON.parse(atob(response.credential.split('.')[1]));
+      
+      let res;
+      if (loginMode === "user") {
+        res = await axios.post(API.USER.GOOGLE_LOGIN(), {
+          email: payload.email,
+          name: payload.name,
+          profilePicture: payload.picture
+        });
+        login(res.data.user, res.data.token);
+        navigate("/profile");
+      } else {
+        res = await axios.post(API.VENDOR.GOOGLE_LOGIN(), {
+          email: payload.email,
+          name: payload.name,
+          profilePicture: payload.picture
+        });
+        login(res.data.user, res.data.token);
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      console.error("Google login error:", err);
+      toast.error("Google login failed. Please try again or register first.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    
+    // Debug: Check if client ID is loaded
+    console.log("Google Client ID:", clientId);
+    
+    if (!clientId) {
+      console.error("VITE_GOOGLE_CLIENT_ID is not defined in .env file");
+      return;
+    }
+
+    // Make callback globally accessible
+    window.handleGoogleResponse = handleGoogleResponse;
+
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: window.handleGoogleResponse
+        });
+        
+        // Render the button programmatically
+        window.google.accounts.id.renderButton(
+          document.getElementById("googleSignInButton"),
+          {
+            type: "standard",
+            size: "large",
+            theme: "outline",
+            text: "sign_in_with",
+            shape: "rectangular",
+            logo_alignment: "left"
+          }
+        );
+      }
+    };
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+      // Clean up global callback
+      delete window.handleGoogleResponse;
+    };
+  }, [loginMode]); // Re-initialize when loginMode changes
+
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value.trim() }));
   }
@@ -29,7 +111,6 @@ export default function Login() {
     try {
       let res;
       if (loginMode === "user") {
-        // --- User Login Logic ---
         res = await axios.post(API.USER.LOGIN(), form);
         login(res.data.user, res.data.token);
 
@@ -42,7 +123,6 @@ export default function Login() {
           navigate("/profile");
         }
       } else {
-        // --- Vendor Login Logic ---
         res = await axios.post(API.VENDOR.LOGIN(), form);
         login(res.data.user, res.data.token);
         
@@ -115,6 +195,18 @@ export default function Login() {
             {loading ? "Signing in..." : (isUserMode ? "Sign In" : "Sign In as Vendor")}
           </Button>
         </form>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">Or continue with</span>
+          </div>
+        </div>
+
+        {/* Google Sign-In Button Container */}
+        <div id="googleSignInButton" className="w-full flex justify-center"></div>
 
         {/* --- Conditional Links at the bottom --- */}
         <div className="mt-8 text-center">

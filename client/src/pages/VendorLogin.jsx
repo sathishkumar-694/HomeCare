@@ -24,7 +24,7 @@ export default function VendorLogin() {
     script.onload = () => {
       if (window.google) {
         window.google.accounts.id.initialize({
-          client_id: "YOUR_GOOGLE_CLIENT_ID", // Replace with actual client ID
+          client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID",
           callback: handleGoogleResponse
         });
       }
@@ -133,7 +133,7 @@ export default function VendorLogin() {
         {/* Google Login Button */}
         <div className="w-full">
           <div id="g_id_onload"
-               data-client_id="YOUR_GOOGLE_CLIENT_ID"
+               data-client_id={process.env.REACT_APP_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID"}
                data-callback="handleGoogleResponse"
                data-auto_prompt="false">
           </div>

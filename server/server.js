@@ -11,10 +11,8 @@ import contactRoutes from "./routes/Contact.js";
 import feedbackRoutes from "./routes/feedback.js";
 import emailRoutes from "./routes/email.js";
 
-// --- NEW IMPORTS (Add these) ---
 import path from "path";
 import { fileURLToPath } from "url";
-// ---------------------------------
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -24,10 +22,8 @@ if (!process.env.JWT_KEY) {
     process.exit(1);
 }
 
-// --- NEW BOILERPLATE (Add these for ES Modules) ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// --------------------------------------------------
 
 const app = express();
 app.use(cors());
@@ -37,13 +33,7 @@ app.use(express.json());
 
 connectDB();
 
-// --- THIS IS THE FIX (Add this line) ---
-// This line makes your 'uploads' folder public so images can be loaded.
-// Place it *before* your API routes.
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-// ----------------------------------------
-
-// --- Your API routes ---
 app.use("/api/vendor", vendorRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);

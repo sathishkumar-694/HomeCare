@@ -7,10 +7,8 @@ export default function Queries() {
   const [queries, setQueries] = useState([]);
   const [selectedQuery, setSelectedQuery] = useState(null);
 
-  // --- State for the modal ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
-  // ---------------------------
 
   useEffect(() => {
     axios
@@ -19,7 +17,6 @@ export default function Queries() {
       .catch((err) => console.error("Error fetching queries:", err));
   }, []);
 
-  // --- New Modal Functions ---
 
   // Opens the modal and sets the query to delete
   const openDeleteModal = (query) => {

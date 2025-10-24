@@ -116,7 +116,6 @@ export const approveBooking = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // --- FIX IS HERE ---
     // Make sure 'paymentStatus' is included in the update object
     const updatedBooking = await Booking.findByIdAndUpdate(
       id, 
@@ -128,7 +127,6 @@ export const approveBooking = async (req, res) => {
     )
     .populate("user", "name email phone") 
     .populate("vendor", "name shopName");
-    // -------------------
 
     if (!updatedBooking) {
       return res.status(404).json({ message: "Booking not found" });

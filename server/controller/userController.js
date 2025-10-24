@@ -3,7 +3,7 @@ import Vendor from "../models/Vendor.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { verifyGoogleToken } from "../utils/googleAuth.js";
-import mongoose from 'mongoose'; // <-- This is needed by updateUserProfile, so it stays
+import mongoose from 'mongoose';
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -107,11 +107,9 @@ export const updateUserProfile = async (req, res) => {
   try {
     const { name, phone, address } = req.body;
 
-    // --- mongoose is used here ---
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return res.status(400).json({ message: 'Invalid user ID' });
     }
-    // ----------------------------
 
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
@@ -193,5 +191,3 @@ export const googleLogin = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
-// --- getUserNotifications function removed ---
