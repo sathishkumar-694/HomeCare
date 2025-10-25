@@ -20,7 +20,7 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
-  
+
   const navigate = useNavigate();
   const toastTimer = React.useRef(null);
 
@@ -168,7 +168,7 @@ export default function Profile() {
       )}
       <div className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-           <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 mb-2">My Profile</h1>
               <p className="text-gray-600">Manage your personal information</p>
@@ -188,8 +188,14 @@ export default function Profile() {
               </div>
             )}
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[ { key: "name", label: "Full Name", type: "text" }, { key: "email", label: "Email Address", type: "email" }, { key: "phone", label: "Phone Number", type: "text" }, { key: "address", label: "Address", type: "text" } ].map((field) => (
+            {[ 
+              { key: "name", label: "Full Name", type: "text" }, 
+              { key: "email", label: "Email Address", type: "email" }, 
+              { key: "phone", label: "Phone Number", type: "text" }, 
+              { key: "address", label: "Address", type: "text" } 
+            ].map((field) => (
               <div key={field.key}>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {field.label}
@@ -205,7 +211,7 @@ export default function Profile() {
             ))}
           </div>
         </div>
-        
+
         <div className="bg-white rounded-xl shadow-lg p-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">My Booking History</h2>
           {bookingsLoading ? (
@@ -225,11 +231,9 @@ export default function Profile() {
           ) : (
             <div className="space-y-6">
               {bookings.map((booking) => {
-                console.log("Booking data in Profile:", booking); // Added console log
                 const statusInfo = getBookingStatus(booking);
                 const Icon = statusInfo.icon; 
                 const canPay = booking.status === 'confirmed' && booking.paymentStatus === 'pending'
-                console.log(`Booking ID: ${booking._id}, Status: ${booking.status}, Payment Status: ${booking.paymentStatus}, Can Pay: ${canPay}`); // Added console log
                 
                 return (
                   <div key={booking._id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">

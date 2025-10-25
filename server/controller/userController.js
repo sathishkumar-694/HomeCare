@@ -58,7 +58,6 @@ export const loginUser = async (req, res) => {
       account = await Vendor.findOne({ email });
       if (account) role = "vendor";
     }
-
     if (!account) return res.status(400).json({ message: "Invalid credentials" });
 
     const isMatch = await bcrypt.compare(password, account.password);
@@ -106,14 +105,20 @@ export const getUserProfile = async (req, res) => {
 export const updateUserProfile = async (req, res) => {
   try {
     const { name, phone, address } = req.body;
+    let imagePath = req.file ? req.file.path : null;
 
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return res.status(400).json({ message: 'Invalid user ID' });
     }
 
+    const updateData = { name, phone, address };
+    if (imagePath) {
+      updateData.profilePicture = imagePath;
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      { name, phone, address },
+      updateData,
       { new: true, runValidators: true }
     ).select("-password");
 

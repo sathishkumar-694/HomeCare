@@ -17,7 +17,7 @@ router.post("/register", upload.single('profileImage'), registerUser);
 router.post("/login", loginUser);
 router.post("/google-login", googleLogin);
 router.get("/:id", getUserProfile);
-router.put("/:id", updateUserProfile);
+router.put("/:id", upload.single('profileImage'), updateUserProfile);
 router.delete("/:id", deleteUser);
 
 export default router;

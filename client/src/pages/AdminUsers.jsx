@@ -117,11 +117,21 @@ export default function AdminUsers() {
             onClick={() => openUserDetails(u)} // This opens the detail popup
             className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] cursor-pointer overflow-hidden"
           >
-            <img
-              src={u.profilePicture || "https://via.placeholder.com/300x200?text=User"}
-              alt={u.name}
-              className="w-full h-40 object-cover"
-            />
+            {u.profilePicture ? (
+              <img
+                src={u.profilePicture}
+                alt={u.name}
+                className="w-full h-40 object-cover"
+              />
+            ) : (
+              <div className="w-full h-40 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center relative">
+                <div className="w-16 h-16 bg-gray-400 rounded-full flex items-center justify-center">
+                  <span className="text-2xl font-bold text-white">
+                    {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="p-3">
               <h2 className="text-lg font-semibold text-gray-800 truncate">
                 {u.name}
@@ -146,11 +156,21 @@ export default function AdminUsers() {
               ✕
             </button>
             
-            <img
-              src={selectedUser.profilePicture || "https://via.placeholder.com/400x250?text=User"}
-              alt={selectedUser.name}
-              className="w-full h-48 object-cover rounded-lg mb-4"
-            />
+            {selectedUser.profilePicture ? (
+              <img
+                src={selectedUser.profilePicture}
+                alt={selectedUser.name}
+                className="w-full h-48 object-cover rounded-lg mb-4"
+              />
+            ) : (
+              <div className="w-full h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center rounded-lg mb-4 relative">
+                <div className="w-20 h-20 bg-gray-400 rounded-full flex items-center justify-center">
+                  <span className="text-3xl font-bold text-white">
+                    {selectedUser.name ? selectedUser.name.charAt(0).toUpperCase() : 'U'}
+                  </span>
+                </div>
+              </div>
+            )}
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
               {selectedUser.name}
             </h2>
